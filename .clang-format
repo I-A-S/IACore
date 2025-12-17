@@ -1,0 +1,13 @@
+---
+BasedOnStyle: Microsoft
+IndentWidth: 4
+SortIncludes: false
+---
+Language: Cpp
+IndentPPDirectives: AfterHash
+FixNamespaceComments: true
+NamespaceIndentation: All
+SeparateDefinitionBlocks: Always
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false

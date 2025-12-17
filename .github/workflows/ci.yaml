@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # -----------------------------------------------------------------------------
+  # Linux Build (Ubuntu 22.04)
+  # Uses the 'linux-ci-release' preset
+  # -----------------------------------------------------------------------------
+  build-linux:
+    name: Linux (Clang / Release)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build clang libssl-dev
+
+    - name: Configure CMake
+      run: cmake --preset linux-ci
+
+    - name: Build
+      run: cmake --build --preset linux-ci-release
+
+    - name: Run Unit Tests
+      run: ./out/build/linux-ci/bin/Release/IACore_Test_Suite
+
+  # -----------------------------------------------------------------------------
+  # Windows Build
+  # Uses the 'windows-debug' preset (Clang-CL + VCPKG)
+  # -----------------------------------------------------------------------------
+  build-windows:
+    name: Windows (Clang-CL / Debug)
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Ninja
+      run: choco install ninja
+
+    - name: Setup VCPKG Environment
+      run: echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
+
+    - name: Install OpenSSL via VCPKG
+      run: vcpkg install openssl:x64-windows
+
+    - name: Configure CMake
+      run: cmake --preset windows-default
+
+    - name: Build
+      run: cmake --build --preset windows-debug
+
+    - name: Run Unit Tests
+      run: ./out/build/windows-default/bin/Debug/IACore_Test_Suite.exe
+ 
