@@ -1,5 +1,6 @@
 set(SRC_FILES
     "imp/cpp/IPC.cpp"
+    "imp/cpp/XML.cpp"
     "imp/cpp/JSON.cpp"
     "imp/cpp/IACore.cpp"
     "imp/cpp/Logger.cpp"
