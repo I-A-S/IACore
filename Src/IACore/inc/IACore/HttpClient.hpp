@@ -127,7 +127,7 @@ namespace IACore
             NETWORK_AUTHENTICATION_REQUIRED = 511
         };
 
-        using Header = KeyValuePair<EHeaderType, String>;
+        using Header = KeyValuePair<String, String>;
 
       public:
         HttpClient(IN CONST String &host);
@@ -151,7 +151,9 @@ namespace IACore
         STATIC String UrlDecode(IN CONST String &value);
 
         STATIC String HeaderTypeToString(IN EHeaderType type);
-        STATIC Header CreateHeader(IN EHeaderType key, IN CONST String &value);
+
+        STATIC INLINE Header CreateHeader(IN EHeaderType key, IN CONST String &value);
+        STATIC INLINE Header CreateHeader(IN CONST String &key, IN CONST String &value);
 
         STATIC BOOL IsSuccessResponseCode(IN EResponseCode code);
 
@@ -191,5 +193,15 @@ namespace IACore
         if (LastResponseCode() != EResponseCode::OK)
             return MakeUnexpected(std::format("Server responded with code {}", (INT32) LastResponseCode()));
         return JSON::ParseToStruct<_response_type>(*rawResponse);
+    }
+
+    HttpClient::Header HttpClient::CreateHeader(IN EHeaderType key, IN CONST String &value)
+    {
+        return std::make_pair(HeaderTypeToString(key), value);
+    }
+
+    HttpClient::Header HttpClient::CreateHeader(IN CONST String &key, IN CONST String &value)
+    {
+        return std::make_pair(key, value);
     }
 } // namespace IACore

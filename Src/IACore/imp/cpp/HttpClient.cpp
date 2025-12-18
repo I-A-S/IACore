@@ -27,10 +27,9 @@ namespace IACore
 
         for (const auto &h : headers)
         {
-            std::string key = HttpClient::HeaderTypeToString(h.first);
-            out.emplace(key, h.second);
+            out.emplace(h.first, h.second);
 
-            if (h.first == HttpClient::EHeaderType::CONTENT_TYPE)
+            if (h.first == HttpClient::HeaderTypeToString(HttpClient::EHeaderType::CONTENT_TYPE))
                 hasContentType = true;
         }
 
@@ -132,11 +131,6 @@ namespace IACore
 
 namespace IACore
 {
-    HttpClient::Header HttpClient::CreateHeader(IN EHeaderType key, IN CONST String &value)
-    {
-        return std::make_pair(key, value);
-    }
-
     String HttpClient::UrlEncode(IN CONST String &value)
     {
         std::stringstream escaped;
