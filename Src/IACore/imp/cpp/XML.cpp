@@ -35,17 +35,50 @@ namespace IACore
         return IA_MOVE(doc);
     }
 
-    String XML::SerializeToString(IN CONST Node &node)
+    String XML::SerializeToString(IN CONST Node &node, IN BOOL escape)
     {
         std::ostringstream oss;
         node.print(oss);
-        return oss.str();
+        return escape ? EscapeXMLString(oss.str()) : oss.str();
     }
 
-    String XML::SerializeToString(IN CONST Document &doc)
+    String XML::SerializeToString(IN CONST Document &doc, IN BOOL escape)
     {
         std::ostringstream oss;
         doc.save(oss);
-        return oss.str();
+        return escape ? EscapeXMLString(oss.str()) : oss.str();
+    }
+
+    String XML::EscapeXMLString(IN CONST String &xml)
+    {
+        String buffer;
+        buffer.reserve(xml.size() + (xml.size() / 10));
+
+        for (char c : xml)
+        {
+            switch (c)
+            {
+            case '&':
+                buffer.append("&amp;");
+                break;
+            case '\"':
+                buffer.append("&quot;");
+                break;
+            case '\'':
+                buffer.append("&apos;");
+                break;
+            case '<':
+                buffer.append("&lt;");
+                break;
+            case '>':
+                buffer.append("&gt;");
+                break;
+            default:
+                buffer.push_back(c);
+                break;
+            }
+        }
+
+        return buffer;
     }
 } // namespace IACore

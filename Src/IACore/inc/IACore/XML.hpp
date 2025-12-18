@@ -31,7 +31,9 @@ namespace IACore
         STATIC Expected<Document, String> ParseFromString(IN CONST String &data);
         STATIC Expected<Document, String> ParseFromFile(IN CONST FilePath &path);
 
-        STATIC String SerializeToString(IN CONST Node &node);
-        STATIC String SerializeToString(IN CONST Document &doc);
+        STATIC String SerializeToString(IN CONST Node &node, IN BOOL escape = false);
+        STATIC String SerializeToString(IN CONST Document &doc, IN BOOL escape = false);
+
+        STATIC String EscapeXMLString(IN CONST String &xml);
     };
 } // namespace IACore
