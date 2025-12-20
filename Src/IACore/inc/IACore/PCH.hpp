@@ -18,13 +18,22 @@
 // -------------------------------------------------------------------------
 // Platform Detection
 // -------------------------------------------------------------------------
+#if defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
+#    define IA_ARCH_X64 1
+#elif defined(__aarch64__) || defined(_M_ARM64)
+#    define IA_ARCH_ARM64 1
+#elif defined(__wasm__) || defined(__wasm32__) || defined(__wasm64__)
+#    define IA_ARCH_WASM 1
+#else
+#    error "IACore: Unsupported Architecture. Only x64, ARM64, and WASM are supported."
+#endif
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #    ifdef _WIN64
 #        define IA_PLATFORM_WIN64 1
 #        define IA_PLATFORM_WINDOWS 1
 #    else
-#        define IA_PLATFORM_WIN32 1
-#        define IA_PLATFORM_WINDOWS 1
+#        error "IACore: 32-bit Windows is not supported"
 #    endif
 #elif __APPLE__
 #    include <TargetConditionals.h>
@@ -41,11 +50,11 @@
 #elif __linux__
 #    define IA_PLATFORM_LINUX 1
 #    define IA_PLATFORM_UNIX 1
-#elif __unix__
-#    define IA_PLATFORM_UNIX 1
+#else
+#    error "IACore: Unsupported Platform. Only Windows, Linux, MacOS, Android and iOS are supported."
 #endif
 
-#if IA_PLATFORM_WIN32 || IA_PLATFORM_WIN64
+#if IA_PLATFORM_WIN64
 #    ifndef WIN32_LEAN_AND_MEAN
 #        define WIN32_LEAN_AND_MEAN
 #    endif
@@ -184,6 +193,7 @@
 #    define VIRTUAL virtual
 #    define OVERRIDE override
 #    define CONSTEXPR constexpr
+#    define CONSTEVAL consteval
 #    define NOEXCEPT noexcept
 #    define NULLPTR nullptr
 #    define IA_MOVE(...) std::move(__VA_ARGS__)
@@ -193,6 +203,7 @@
 #    define VIRTUAL
 #    define OVERRIDE
 #    define CONSTEXPR const
+#    define CONSTEVAL
 #    define NOEXCEPT
 #    define NULLPTR NULL
 #    define IA_MOVE(...) (__VA_ARGS__)

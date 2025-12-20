@@ -22,8 +22,11 @@
 namespace IACore
 {
     // Must be called from main thread
+    // Safe to call multiple times but, every Initialize call is paired with a corresponding Terminate call
     VOID Initialize();
+
     // Must be called from same thread as Initialize
+    // Safe to call multiple times but, every Initialize call is paired with a corresponding Terminate call
     VOID Terminate();
 
     UINT64 GetUnixTime();
@@ -31,8 +34,8 @@ namespace IACore
     FLOAT64 GetSecondsCount();
 
     FLOAT32 GetRandom();
-    UINT32 GetRandom(IN UINT32 seed);
     INT64 GetRandom(IN INT64 min, IN INT64 max);
+    UINT64 GetRandom(IN UINT64 max);
 
     BOOL IsMainThread();
     VOID Sleep(IN UINT64 milliseconds);

@@ -20,9 +20,13 @@ namespace IACore
 {
     HighResTimePoint g_startTime{};
     std::thread::id g_mainThreadID{};
+    INT32 g_coreInitCount{};
 
     VOID Initialize()
     {
+        g_coreInitCount++;
+        if (g_coreInitCount > 1)
+            return;
         g_mainThreadID = std::this_thread::get_id();
         g_startTime = HighResClock::now();
         Logger::Initialize();
@@ -30,6 +34,9 @@ namespace IACore
 
     VOID Terminate()
     {
+        g_coreInitCount--;
+        if (g_coreInitCount > 0)
+            return;
         Logger::Terminate();
     }
 
@@ -54,16 +61,14 @@ namespace IACore
         return static_cast<FLOAT32>(rand()) / static_cast<FLOAT32>(RAND_MAX);
     }
 
-    UINT32 GetRandom(IN UINT32 seed)
+    UINT64 GetRandom(IN UINT64 max)
     {
-        srand(seed);
-        return (UINT32) GetRandom(0, UINT32_MAX);
+        return max * GetRandom();
     }
 
     INT64 GetRandom(IN INT64 min, IN INT64 max)
     {
-        const auto t = static_cast<FLOAT32>(rand()) / static_cast<FLOAT32>(RAND_MAX);
-        return min + (max - min) * t;
+        return min + (max - min) * GetRandom();
     }
 
     VOID Sleep(IN UINT64 milliseconds)

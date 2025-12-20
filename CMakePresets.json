@@ -62,6 +62,17 @@
       "cacheVariables": {
         "IS_CI_BUILD": "ON"
       }
+    },
+    {
+      "name": "wasm-default",
+      "displayName": "WebAssembly (Emscripten)",
+      "description": "Build using Emscripten toolchain",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/wasm-release",
+      "toolchainFile": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-msimd128 -pthread"
+      }
     }
   ],
   "buildPresets": [
@@ -84,6 +95,11 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       }
+    },
+    {
+      "name": "linux-wasm-debug",
+      "configurePreset": "wasm-default",
+      "configuration": "Debug"
     },
     {
       "name": "linux-ci-release",
