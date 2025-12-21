@@ -59,5 +59,27 @@
         "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-clang"
       }
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-x64",
+      "configurePreset": "linux-x64"
+    },
+    {
+      "name": "linux-arm64",
+      "configurePreset": "linux-arm64"
+    },
+    {
+      "name": "windows-x64",
+      "configurePreset": "windows-x64"
+    },
+    {
+      "name": "windows-arm64",
+      "configurePreset": "windows-arm64"
+    },
+    {
+      "name": "wasm",
+      "configurePreset": "wasm"
+    }
   ]
 }

@@ -25,5 +25,5 @@ jobs:
         run: cmake --preset ${{ matrix.target }}
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.target }} --config Debug
+        run: cmake --build --preset ${{ matrix.target }} --config Release
 

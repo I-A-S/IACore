@@ -2,7 +2,7 @@ include(FetchContent)
 
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Force static libs")
 
-find_package(OpenSSL REQUIRED)
+find_package(OpenSSL 3.0.0 REQUIRED)
 find_package(zstd CONFIG REQUIRED)
 find_package(zlib-ng CONFIG REQUIRED)
 
@@ -80,8 +80,11 @@ set(MI_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 
 set(EXPECTED_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
-set(HTTPLIB_REQUIRE_OPENSSL OFF CACHE BOOL "" FORCE)
-set(HTTPLIB_REQUIRE_ZLIB OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_REQUIRE_OPENSSL ON CACHE BOOL "" FORCE)
+set(HTTPLIB_REQUIRE_ZLIB ON CACHE BOOL "" FORCE)
 set(HTTPLIB_NO_EXCEPTIONS ON CACHE BOOL "" FORCE)
+set(HTTPLIB_COMPILE OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_TEST OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_EXAMPLE OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(httplib pugixml nlohmann_json glaze simdjson tl-expected unordered_dense mimalloc)
