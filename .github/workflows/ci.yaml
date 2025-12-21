@@ -9,6 +9,9 @@ on:
 jobs:
   build-all:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     container:
       image: ghcr.io/i-a-s/iabuild-env:latest
     strategy:
