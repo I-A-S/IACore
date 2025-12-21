@@ -1,0 +1,9 @@
+{
+    "name": "iacore",
+    "version": "0.1.0",
+    "dependencies": [
+        "openssl",
+        "zlib-ng",
+        "zstd"
+    ]
+}

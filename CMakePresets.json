@@ -13,22 +13,23 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "VCPKG_MANIFEST_MODE": "ON",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/CMake/Triplets",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/CMake/Toolchains/${presetName}.cmake"
       }
     },
     {
       "name": "linux-x64",
-      "displayName": "Linux x64 (AVX2)",
+      "displayName": "Linux x64 (Clang)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-linux-avx2"
+        "VCPKG_TARGET_TRIPLET": "x64-linux-clang"
       }
     },
     {
       "name": "linux-arm64",
-      "displayName": "Linux ARM64 (Clang/Sysroot)",
+      "displayName": "Linux ARM64 (Clang Cross)",
       "inherits": "base-common",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-linux-clang"
@@ -36,24 +37,26 @@
     },
     {
       "name": "windows-x64",
-      "displayName": "Windows x64 (AVX2)",
-      "inherits": "base-common"
+      "displayName": "Windows x64 (Clang)",
+      "inherits": "base-common",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-clang"
+      }
     },
     {
       "name": "windows-arm64",
-      "displayName": "Windows ARM64 (Cross-Compile)",
+      "displayName": "Windows ARM64 (Clang Cross)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-windows-cross",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/CMake/Toolchains/windows-arm64.cmake"
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-clang"
       }
     },
     {
       "name": "wasm",
-      "displayName": "WebAssembly (SIMD/Pthreads)",
+      "displayName": "WebAssembly (Clang)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-simd"
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-clang"
       }
     }
   ]

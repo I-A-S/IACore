@@ -2,8 +2,9 @@ include(FetchContent)
 
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Force static libs")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=int-conversion")
-add_compile_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+find_package(OpenSSL REQUIRED)
+find_package(zstd REQUIRED)
+find_package(ZLIB REQUIRED)
 
 FetchContent_Declare(
   httplib
@@ -33,23 +34,6 @@ FetchContent_Declare(
   simdjson
   GIT_REPOSITORY https://github.com/simdjson/simdjson.git
   GIT_TAG        v4.2.2
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-FetchContent_Declare(
-  ZLIB
-  GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
-  GIT_TAG        2.3.2
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-FetchContent_Declare(
-  zstd
-  GIT_REPOSITORY https://github.com/facebook/zstd.git
-  GIT_TAG        v1.5.7
-  SOURCE_SUBDIR  build/cmake 
   SYSTEM
   EXCLUDE_FROM_ALL
 )
@@ -100,14 +84,4 @@ set(HTTPLIB_REQUIRE_OPENSSL OFF CACHE BOOL "" FORCE)
 set(HTTPLIB_REQUIRE_ZLIB OFF CACHE BOOL "" FORCE)
 set(HTTPLIB_NO_EXCEPTIONS ON CACHE BOOL "" FORCE)
 
-set(ZSTD_BUILD_SHARED OFF CACHE BOOL "" FORCE)
-set(ZSTD_BUILD_STATIC ON CACHE BOOL "" FORCE)
-
-set(ZLIB_COMPAT ON CACHE BOOL "" FORCE)
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(ZLIB zstd)
-
 FetchContent_MakeAvailable(httplib pugixml nlohmann_json glaze simdjson tl-expected unordered_dense mimalloc)
-
-find_package(OpenSSL REQUIRED)

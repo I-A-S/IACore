@@ -37,7 +37,7 @@ BOOL TestCRC32()
 
     {
         UINT32 result = DataOps::CRC32({});
-        IAT_CHECK_EQ(result, 0);
+        IAT_CHECK_EQ(result, 0U);
     }
 
     {
