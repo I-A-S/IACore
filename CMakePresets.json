@@ -14,8 +14,6 @@
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "WITH_AVX2": "ON",
-        "WITH_NEON": "ON",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/CMake/Triplets",
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       }
@@ -25,65 +23,37 @@
       "displayName": "Linux x64 (AVX2)",
       "inherits": "base-common",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Linux",
-        "CMAKE_SYSTEM_PROCESSOR": "x86_64",
-        "CMAKE_C_FLAGS": "-mavx2 -mfma",
-        "CMAKE_CXX_FLAGS": "-mavx2 -mfma",
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
+        "VCPKG_TARGET_TRIPLET": "x64-linux-avx2"
       }
     },
     {
       "name": "linux-arm64",
-      "displayName": "Linux ARM64 (NEON)",
+      "displayName": "Linux ARM64 (Clang/Sysroot)",
       "inherits": "base-common",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Linux",
-        "CMAKE_SYSTEM_PROCESSOR": "aarch64",
-        "CMAKE_C_COMPILER_TARGET": "aarch64-linux-gnu",
-        "CMAKE_CXX_COMPILER_TARGET": "aarch64-linux-gnu",
-        "CMAKE_CXX_FLAGS": "-march=armv8-a+simd",
-        "CMAKE_SYSROOT": "/usr/aarch64-linux-gnu",
-        "VCPKG_TARGET_TRIPLET": "arm64-linux"
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-clang"
       }
     },
     {
       "name": "windows-x64",
       "displayName": "Windows x64 (AVX2)",
-      "inherits": "base-common",
-      "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Windows",
-        "CMAKE_SYSTEM_PROCESSOR": "x86_64",
-        "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_CXX_FLAGS": "/arch:AVX2",
-        "VCPKG_TARGET_TRIPLET": "x64-windows"
-      }
+      "inherits": "base-common"
     },
     {
       "name": "windows-arm64",
-      "displayName": "Windows ARM64 (NEON)",
+      "displayName": "Windows ARM64 (Cross-Compile)",
       "inherits": "base-common",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Windows",
-        "CMAKE_SYSTEM_PROCESSOR": "aarch64",
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "--target=arm64-pc-windows-msvc -fuse-ld=lld-link",
-        "VCPKG_TARGET_TRIPLET": "arm64-windows"
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-cross",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/CMake/Toolchains/windows-arm64.cmake"
       }
     },
     {
       "name": "wasm",
-      "displayName": "WebAssembly (SIMD)",
+      "displayName": "WebAssembly (SIMD/Pthreads)",
       "inherits": "base-common",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Emscripten",
-        "CMAKE_SYSTEM_PROCESSOR": "wasm32",
-        "CMAKE_C_COMPILER": "emcc",
-        "CMAKE_CXX_COMPILER": "em++",
-        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-simd",
-        "VCPKG_HOST_TRIPLET": "x64-linux",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten-simd"
       }
     }
   ]

@@ -15,11 +15,21 @@ jobs:
     container:
       image: ghcr.io/i-a-s/iabuild-env:latest
     strategy:
+      fail-fast: false
       matrix:
         target: [linux-x64, linux-arm64, windows-x64, windows-arm64, wasm]
     steps:
       - uses: actions/checkout@v4
-      - name: Build
+
+      - name: Environment Info
         run: |
-          cmake --preset ${{ matrix.target }}
-          cmake --build --preset debug
+          clang --version
+          cmake --version
+          ls -R /usr/aarch64-linux-gnu/sys-root | head -n 20
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.target }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.target }} --config Debug
+
