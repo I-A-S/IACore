@@ -4,7 +4,12 @@
     "builtin-baseline": "37dcabc43809a960f41758e00e615cc6e26e8bbf",
     "dependencies": [
         "openssl",
-        "zlib-ng",
-        "zstd"
+        "zstd",
+        {
+            "name": "zlib-ng",
+            "features": [
+                "compat"
+            ]
+        }
     ]
 }
