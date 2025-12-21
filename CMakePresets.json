@@ -24,7 +24,7 @@
       "displayName": "Linux x64 (Clang)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-linux-clang"
+        "VCPKG_TARGET_TRIPLET": "linux-x64-clang"
       }
     },
     {
@@ -32,7 +32,7 @@
       "displayName": "Linux ARM64 (Clang Cross)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-linux-clang"
+        "VCPKG_TARGET_TRIPLET": "linux-arm64-clang"
       }
     },
     {
@@ -40,7 +40,7 @@
       "displayName": "Windows x64 (Clang)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-windows-clang"
+        "VCPKG_TARGET_TRIPLET": "windows-x64-clang"
       }
     },
     {
@@ -48,7 +48,7 @@
       "displayName": "Windows ARM64 (Clang Cross)",
       "inherits": "base-common",
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-windows-clang"
+        "VCPKG_TARGET_TRIPLET": "windows-arm64-clang"
       }
     },
     {

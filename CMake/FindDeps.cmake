@@ -3,8 +3,8 @@ include(FetchContent)
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Force static libs")
 
 find_package(OpenSSL REQUIRED)
-find_package(zstd REQUIRED)
-find_package(ZLIB REQUIRED)
+find_package(zstd CONFIG REQUIRED)
+find_package(zlib-ng CONFIG REQUIRED)
 
 FetchContent_Declare(
   httplib

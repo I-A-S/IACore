@@ -22,8 +22,8 @@ target_include_directories(IACore PUBLIC inc/)
 target_include_directories(IACore PRIVATE imp/hpp/)
 
 target_link_libraries(IACore PUBLIC 
-    ZLIB::ZLIB    
-    zstd::libzstd_static
+    zlib-ng::zlib    
+    zstd::libzstd
     tl::expected 
     glaze::glaze
     pugixml::pugixml

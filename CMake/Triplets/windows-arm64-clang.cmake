@@ -7,3 +7,5 @@ set(VCPKG_POLICY_EMPTY_PACKAGE enabled)
 
 set(VCPKG_C_FLAGS "--target=arm64-pc-windows-msvc")
 set(VCPKG_CXX_FLAGS "--target=arm64-pc-windows-msvc")
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/../Toolchains/windows-arm64.cmake")

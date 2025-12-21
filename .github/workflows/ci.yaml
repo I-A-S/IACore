@@ -21,12 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Environment Info
-        run: |
-          clang --version
-          cmake --version
-          ls -R /usr/aarch64-linux-gnu/sys-root | head -n 20
-
       - name: Configure
         run: cmake --preset ${{ matrix.target }}
 
