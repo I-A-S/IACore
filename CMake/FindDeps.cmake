@@ -104,7 +104,8 @@ FetchContent_Declare(
 FetchContent_Declare(
   highway
   GIT_REPOSITORY https://github.com/google/highway.git
-  GIT_TAG        1.3.0  
+  GIT_TAG        1.3.0
+  SYSTEM
 )
 
 set(MI_OVERRIDE ON CACHE BOOL "" FORCE)
@@ -121,15 +122,17 @@ set(HTTPLIB_COMPILE OFF CACHE BOOL "" FORCE)
 set(HTTPLIB_TEST OFF CACHE BOOL "" FORCE)
 set(HTTPLIB_EXAMPLE OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(zlib zstd httplib pugixml nlohmann_json glaze simdjson tl-expected unordered_dense mimalloc highway)
-
-if(NOT TARGET simdjson::simdjson)
-    add_library(simdjson::simdjson ALIAS simdjson)
-endif()
+FetchContent_MakeAvailable(zlib zstd)
 
 if(NOT TARGET zstd::libzstd)
     add_library(zstd::libzstd ALIAS libzstd_static)
 endif()
 
-get_target_property(HWY_INCLUDE_DIRS hwy INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(hwy SYSTEM INTERFACE ${HWY_INCLUDE_DIRS})
+FetchContent_MakeAvailable(httplib pugixml nlohmann_json glaze simdjson tl-expected unordered_dense mimalloc highway)
+
+if(NOT TARGET simdjson::simdjson)
+    add_library(simdjson::simdjson ALIAS simdjson)
+endif()
+
+target_compile_options(hwy PRIVATE -w)
+target_compile_options(libzstd_static PRIVATE -w)

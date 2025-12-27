@@ -19,7 +19,7 @@
 
 namespace IACore
 {
-    Logger::ELogLevel Logger::s_logLevel{Logger::ELogLevel::WARN};
+    Logger::ELogLevel Logger::s_logLevel{Logger::ELogLevel::INFO};
     std::ofstream Logger::s_logFile{};
 
     VOID Logger::Initialize()

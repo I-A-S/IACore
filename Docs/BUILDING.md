@@ -26,13 +26,7 @@ cmake --preset windows-x64
 cmake --build --preset windows-x64
 ```
 
-**3. Test (Optional)**
-
-```bash
-ctest --preset windows-x64
-```
-
-### Presets
+### Available Presets
 
 |Preset       |Description                   |Toolchain                           |
 |-------------|------------------------------|------------------------------------|

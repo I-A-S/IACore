@@ -19,6 +19,33 @@
 
 #ifdef __cplusplus
 
+#    include <IACore/Logger.hpp>
+
+#    define IACORE_MAIN()                                                                                              \
+        Expected<INT32, String> _app_entry(IN CONST Vector<String> &args);                                             \
+        int main(int argc, char *argv[])                                                                               \
+        {                                                                                                              \
+            int exitCode = 0;                                                                                          \
+            IACore::Initialize();                                                                                      \
+            Vector<String> args;                                                                                       \
+            for (int i = 0; i < argc; i++)                                                                             \
+                args.push_back(argv[i]);                                                                               \
+            const auto result = _app_entry(args);                                                                      \
+            if (!result)                                                                                               \
+            {                                                                                                          \
+                IACore::Logger::Error("Application exited with an error: '{}'.", result.error());                      \
+                exitCode = -20;                                                                                        \
+            }                                                                                                          \
+            exitCode = *result;                                                                                        \
+            if (!exitCode)                                                                                             \
+                IACore::Logger::Info("Application exited successfully.");                                              \
+            else                                                                                                       \
+                IACore::Logger::Error("Application exited with error code: {}.", exitCode);                            \
+            IACore::Terminate();                                                                                       \
+            return exitCode;                                                                                           \
+        }                                                                                                              \
+        Expected<INT32, String> _app_entry(IN CONST Vector<String> &args)
+
 namespace IACore
 {
     // Must be called from main thread
