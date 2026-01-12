@@ -565,6 +565,8 @@ template<typename _value_type> using Deque = std::deque<_value_type>;
 template<typename _type_a, typename _type_b> using Pair = std::pair<_type_a, _type_b>;
 template<typename... types> using Tuple = std::tuple<types...>;
 template<typename _key_type, typename _value_type> using KeyValuePair = std::pair<_key_type, _value_type>;
+ALIAS_TEMPLATE_FUNCTION(_value_type, MakeShared, std::make_shared);
+ALIAS_TEMPLATE_FUNCTION(_value_type, MakeUnique, std::make_unique);
 
 template<typename _expected_type, typename _unexpected_type>
 using Expected = tl::expected<_expected_type, _unexpected_type>;
