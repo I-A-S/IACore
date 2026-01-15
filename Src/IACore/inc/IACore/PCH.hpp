@@ -212,7 +212,7 @@
 #define FORWARD_DECLARE(t, i) t i
 
 #ifdef __cplusplus
-#    define PURE_VIRTUAL(f) VIRTUAL f = 0
+#    define PURE_VIRTUAL(...) VIRTUAL __VA_ARGS__ = 0
 #endif
 
 // -----------------------------------------------------------------------------
