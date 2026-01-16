@@ -1,4 +1,5 @@
 set(SRC_FILES
+    "imp/cpp/CLI.cpp"
     "imp/cpp/IPC.cpp"
     "imp/cpp/XML.cpp"
     "imp/cpp/SIMD.cpp"

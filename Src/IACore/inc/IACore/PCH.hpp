@@ -379,6 +379,9 @@
 #define IA_MAX_STRING_LENGTH (IA_MAX_POSSIBLE_SIZE >> 8)
 
 #define IA_VERSION_TYPE uint64_t
+#define IA_VERSION_MAJOR(v) ((v >> 40) & 0xFFFFFF)
+#define IA_VERSION_MINOR(v) ((v >> 16) & 0xFFFFFF)
+#define IA_VERSION_PATCH(v) (v & 0xFFFF)
 #define IA_MAKE_VERSION(major, minor, patch)                                                                           \
     ((((uint64_t) (major) & 0xFFFFFF) << 40) | (((uint64_t) (minor) & 0xFFFFFF) << 16) | ((uint64_t) (patch) & 0xFFFF))
 
