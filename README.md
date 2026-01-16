@@ -116,10 +116,21 @@ IACore is built with CMake. You can include it in your project via `FetchContent
 
 ### CMake Example
 ```cmake
-add_subdirectory(IACore)
+cmake_minimum_required(VERSION 3.28)
+project(MyGame)
 
-add_executable(MyApp Main.cpp)
-target_link_libraries(MyApp PRIVATE IACore)
+# Or you can use FetchContent
+add_subdirectory(external/IACore)
+
+# Apply IACore's standard project configuration
+# This applies C++20 and strict warning flags globally to your targets.
+iacore_setup_project()
+
+# Define your targets
+add_executable(MyGame src/main.cpp)
+
+# Link IACore
+target_link_libraries(MyGame PRIVATE IACore)
 ```
 
 ## 🤝 Contributing

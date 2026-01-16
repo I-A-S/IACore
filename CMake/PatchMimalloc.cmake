@@ -23,3 +23,14 @@ if(ALREADY_PATCHED EQUAL -1)
 else()
     message(STATUS "mimalloc source is already patched. Skipping.")
 endif()
+
+# Patch mimalloc complaing about false positive alignment issues in libc loader
+file(READ "${SOURCE_DIR}/CMakeLists.txt" MI_CMAKE_CONTENT)
+string(REPLACE 
+    "set(mi_debug_default ON)" 
+    "set(mi_debug_default OFF)" 
+    MI_CMAKE_CONTENT 
+    "${MI_CMAKE_CONTENT}"
+)
+file(WRITE "${SOURCE_DIR}/CMakeLists.txt" "${MI_CMAKE_CONTENT}")
+message(STATUS "Patched mimalloc: Forced MI_DEBUG default to OFF to silence alignment warnings.")

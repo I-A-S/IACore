@@ -16,6 +16,8 @@
 #include <IACore/IACore.hpp>
 #include <IACore/Logger.hpp>
 
+#include <mimalloc.h>
+
 namespace IACore
 {
     HighResTimePoint g_startTime{};
@@ -30,6 +32,8 @@ namespace IACore
         g_mainThreadID = std::this_thread::get_id();
         g_startTime = HighResClock::now();
         Logger::Initialize();
+
+        mi_option_set(mi_option_verbose, 0);
     }
 
     VOID Terminate()

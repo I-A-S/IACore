@@ -17,6 +17,15 @@
 
 #include <IACore/PCH.hpp>
 
+#define IA_LOG_SET_FILE(path) IACore::Logger::EnableLoggingToDisk(path)
+#define IA_LOG_SET_LEVEL(level) IACore::Logger::SetLogLevel(IACore::Logger::ELogLevel::level)
+
+#define IA_LOG_TRACE(...) IACore::Logger::Trace(__VA_ARGS__)
+#define IA_LOG_DEBUG(...) IACore::Logger::Debug(__VA_ARGS__)
+#define IA_LOG_INFO(...) IACore::Logger::Info(__VA_ARGS__)
+#define IA_LOG_WARN(...) IACore::Logger::Warn(__VA_ARGS__)
+#define IA_LOG_ERROR(...) IACore::Logger::Error(__VA_ARGS__)
+
 namespace IACore
 {
     class Logger
@@ -24,7 +33,8 @@ namespace IACore
       public:
         enum class ELogLevel
         {
-            VERBOSE,
+            TRACE,
+            DEBUG,
             INFO,
             WARN,
             ERROR
@@ -34,9 +44,14 @@ namespace IACore
         STATIC BOOL EnableLoggingToDisk(IN PCCHAR filePath);
         STATIC VOID SetLogLevel(IN ELogLevel logLevel);
 
-        template<typename... Args> STATIC VOID Status(FormatterString<Args...> fmt, Args &&...args)
+        template<typename... Args> STATIC VOID Trace(FormatterString<Args...> fmt, Args &&...args)
         {
-            LogStatus(std::vformat(fmt.get(), std::make_format_args(args...)));
+            LogTrace(std::vformat(fmt.get(), std::make_format_args(args...)));
+        }
+
+        template<typename... Args> STATIC VOID Debug(FormatterString<Args...> fmt, Args &&...args)
+        {
+            LogDebug(std::vformat(fmt.get(), std::make_format_args(args...)));
         }
 
         template<typename... Args> STATIC VOID Info(FormatterString<Args...> fmt, Args &&...args)
@@ -58,7 +73,12 @@ namespace IACore
 
       private:
 #if IA_DISABLE_LOGGING > 0
-        STATIC VOID LogStatus(IN String &&msg)
+        STATIC VOID LogTrace(IN String &&msg)
+        {
+            UNUSED(msg);
+        }
+
+        STATIC VOID LogDebug(IN String &&msg)
         {
             UNUSED(msg);
         }
@@ -78,10 +98,16 @@ namespace IACore
             UNUSED(msg);
         }
 #else
-        STATIC VOID LogStatus(IN String &&msg)
+        STATIC VOID LogTrace(IN String &&msg)
         {
-            if (s_logLevel <= ELogLevel::VERBOSE)
-                LogInternal(__CC_WHITE, "STATUS", IA_MOVE(msg));
+            if (s_logLevel <= ELogLevel::TRACE)
+                LogInternal(__CC_WHITE, "TRACE", IA_MOVE(msg));
+        }
+
+        STATIC VOID LogDebug(IN String &&msg)
+        {
+            if (s_logLevel <= ELogLevel::DEBUG)
+                LogInternal(__CC_CYAN, "DEBUG", IA_MOVE(msg));
         }
 
         STATIC VOID LogInfo(IN String &&msg)
