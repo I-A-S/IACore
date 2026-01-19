@@ -353,6 +353,16 @@
         std::move(*_ia_res);                                                                                           \
     })
 
+#define IA_TRY_DISCARD(expr)                                                                                           \
+    {                                                                                                                  \
+        auto _ia_res = (expr);                                                                                         \
+        if (!_ia_res)                                                                                                  \
+        {                                                                                                              \
+            return tl::make_unexpected(std::move(_ia_res.error()));                                                    \
+        }                                                                                                              \
+        UNUSED(*_ia_res);                                                                                              \
+    }
+
 #define IA_CONCAT_IMPL(x, y) x##y
 #define IA_CONCAT(x, y) IA_CONCAT_IMPL(x, y)
 #define IA_UNIQUE_NAME(prefix) IA_CONCAT(prefix, __LINE__)
