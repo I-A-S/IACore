@@ -14,7 +14,7 @@
 </div>
 
 > [!WARNING]
-> A major rewrite is coming to IACore API and coding style on Jan 30th. While the functionality and classes you're familiar will remain the same, this rewrite will introduce breaking changes to the overall API and how IACore is used. This rewrite will align IACore API and coding style with a Rust-inspired modern, clean and a vastly improved maintainable alternative.
+> You're currently viewing the Legacy IACore API, if you're looking for the latest version of IACore, please switch to the `main` branch!
 
 ## 📖 Description
 IACore is a high-performance C++20 foundation library bundling essential systems (IPC, Logging, Networking, Compression, and Async Scheduling) into a single, coherent API.
