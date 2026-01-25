@@ -43,12 +43,12 @@ IACore provides a manager/node architecture using shared memory.
 #include <IACore/IPC.hpp>
 
 // Spawns a child process and connects via Shared Memory
-auto nodeID = manager.SpawnNode("MyChildNodeExe");
-manager.WaitTillNodeIsOnline(*nodeID);
+auto nodeID = manager.spawn_node("MyChildNodeExe");
+manager.wait_till_node_is_online(*nodeID);
 
 // Send data with zero-copy overhead
 String msg = "Hello Node";
-manager.SendPacket(*nodeID, 100, {(PCUINT8)msg.data(), msg.size()});
+manager.send_packet(*nodeID, 100, {(PCUINT8)msg.data(), msg.size()});
 ```
 
 #### Node:
@@ -57,11 +57,11 @@ manager.SendPacket(*nodeID, 100, {(PCUINT8)msg.data(), msg.size()});
 
 class Node : public IACore::IPC_Node {
 public:
-    void OnSignal(uint8_t signal) override {
+    void on_signal(uint8_t signal) override {
         // Handle signals
     }
 
-    void OnPacket(uint16_t packetID, std::span<const uint8_t> payload) override {
+    void on_packet(uint16_t packet_id, std::span<const uint8_t> payload) override {
         // Handle packets
     }
 };
@@ -72,10 +72,10 @@ int main(int argc, char* argv[]) {
     
     Node node;
     // Connect back to the manager via Shared Memory
-    if (!node.Connect(argv[1])) return -1;
+    if (!node.connect(argv[1])) return -1;
     
     while(true) {
-        node.Update();
+        node.update();
     }
     return 0;
 }
@@ -87,25 +87,25 @@ int main(int argc, char* argv[]) {
 #include <IACore/AsyncOps.hpp>
 
 // Initialize worker threads (hardware_concurrency - 2)
-IACore::AsyncOps::InitializeScheduler();
+IACore::AsyncOps::initialize_scheduler();
 
 // Schedule a task
-IACore::AsyncOps::Schedule *mySchedule = new IACore::AsyncOps::Schedule();
+IACore::AsyncOps::Schedule *my_schedule = new IACore::AsyncOps::Schedule();
 
-IACore::AsyncOps::ScheduleTask([](auto workerID) {
-    printf("Running on worker %d\n", workerID);
-}, 0, mySchedule);
+IACore::AsyncOps::schedule_task([](auto worker_id) {
+    printf("Running on worker %d\n", worker_id);
+}, 0, my_schedule);
 
 // Wait for completion
-IACore::AsyncOps::WaitForScheduleCompletion(mySchedule);
+IACore::AsyncOps::wait_for_schedule_completion(my_schedule);
 ```
 
 ### 3. HTTP Request
 ```C++
-#include <IACore/HttpClient.hpp>
+#include <IACore/Http/Client.hpp>
 
 IACore::HttpClient client("https://api.example.com");
-auto res = client.JsonGet<MyResponseStruct>("/data", {});
+auto res = client.json_get<MyResponseStruct>("/data", {});
 
 if (res) {
     std::cout << "Data: " << res->value << "\n";
