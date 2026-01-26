@@ -87,5 +87,23 @@
       "name": "x64-windows-cross",
       "configurePreset": "x64-windows-cross"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "x64-linux",
+      "configurePreset": "x64-linux",
+      "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "x64-windows",
+      "configurePreset": "x64-windows",
+      "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
   ]
 }
