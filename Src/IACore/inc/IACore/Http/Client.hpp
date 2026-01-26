@@ -18,19 +18,22 @@
 #include <IACore/Http/Common.hpp>
 #include <IACore/JSON.hpp>
 
+typedef void CURL;
+struct curl_slist;
+
 namespace IACore
 {
   class HttpClient : public HttpCommon
   {
 public:
     static auto create(Ref<String> host) -> Result<Box<HttpClient>>;
-
     ~HttpClient();
 
-    HttpClient(ForwardRef<HttpClient>) = default;
-    HttpClient(Ref<HttpClient>) = delete;
-    auto operator=(ForwardRef<HttpClient>) -> MutRef<HttpClient> = default;
-    auto operator=(Ref<HttpClient>) -> MutRef<HttpClient> = delete;
+    HttpClient(const HttpClient &) = delete;
+    auto operator=(const HttpClient &) -> HttpClient & = delete;
+
+    HttpClient(HttpClient &&other) noexcept;
+    auto operator=(HttpClient &&other) noexcept -> HttpClient &;
 
 public:
     auto raw_get(Ref<String> path, Span<const Header> headers,
@@ -44,25 +47,25 @@ public:
     template<typename PayloadType, typename ResponseType>
     auto json_post(Ref<String> path, Span<const Header> headers, Ref<PayloadType> body) -> Result<ResponseType>;
 
-    // Certificate verification is enabled by default
     auto enable_certificate_verification() -> void;
     auto disable_certificate_verification() -> void;
 
-public:
     auto last_response_code() -> EResponseCode
     {
       return m_last_response_code;
     }
 
-private:
-    Mut<httplib::Client> m_client;
-    Mut<EResponseCode> m_last_response_code;
-
-private:
-    auto preprocess_response(Ref<String> response) -> String;
-
 protected:
-    explicit HttpClient(ForwardRef<httplib::Client> client);
+    explicit HttpClient(Ref<String> host);
+
+private:
+    Mut<CURL *> m_curl = nullptr;
+    Mut<String> m_host;
+    Mut<EResponseCode> m_last_response_code = EResponseCode::INTERNAL_SERVER_ERROR;
+
+    auto perform_request(Ref<String> full_url, struct curl_slist *headers) -> Result<String>;
+
+    static auto write_callback(void *contents, size_t size, size_t nmemb, void *userp) -> size_t;
   };
 
   template<typename ResponseType>

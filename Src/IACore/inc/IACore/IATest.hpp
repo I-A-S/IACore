@@ -17,10 +17,6 @@
 
 #include <IACore/PCH.hpp>
 
-// -----------------------------------------------------------------------------
-// Macros
-// -----------------------------------------------------------------------------
-
 #define __iat_micro_test(call)                                                                                         \
   if (!(call))                                                                                                         \
   return false
@@ -31,6 +27,7 @@
 #define IAT_CHECK_NEQ(lhs, rhs) __iat_micro_test(_test_neq((lhs), (rhs), #lhs " != " #rhs))
 
 #define IAT_CHECK_APPROX(lhs, rhs) __iat_micro_test(_test_approx((lhs), (rhs), #lhs " ~= " #rhs))
+#define IAT_CHECK_APPROX_EPS(lhs, rhs, eps) __iat_micro_test(_test_approx((lhs), (rhs), #lhs " ~= " #rhs, (eps)))
 
 #define IAT_UNIT(func) _test_unit([this]() { return this->func(); }, #func)
 #define IAT_NAMED_UNIT(n, func) _test_unit([this]() { return this->func(); }, n)
@@ -64,18 +61,24 @@ private:
 
 namespace IACore::Test
 {
-  // -------------------------------------------------------------------------
-  // String Conversion Helpers
-  // -------------------------------------------------------------------------
-  template<typename T> auto to_string(Ref<T> value) -> String
+  template<typename T>
+  concept Streamable = requires(std::ostream &os, const T &t) { os << t; };
+
+  template<typename T> auto to_string(const T &value) -> String
   {
     if constexpr (std::is_arithmetic_v<T>)
     {
       return std::to_string(value);
     }
-    else if constexpr (std::is_same_v<T, String> || std::is_same_v<T, const char *> || std::is_same_v<T, char *>)
+    else if constexpr (std::is_convertible_v<T, String> || std::is_same_v<T, const char *> || std::is_same_v<T, char *>)
     {
       return String("\"") + String(value) + "\"";
+    }
+    else if constexpr (Streamable<T>)
+    {
+      std::stringstream ss;
+      ss << value;
+      return ss.str();
     }
     else
     {
@@ -92,9 +95,6 @@ namespace IACore::Test
     return std::format("ptr({})", static_cast<const void *>(value));
   }
 
-  // -------------------------------------------------------------------------
-  // Types
-  // -------------------------------------------------------------------------
   using TestFunctor = std::function<bool()>;
 
   struct TestUnit
@@ -136,11 +136,26 @@ protected:
       return true;
     }
 
-    template<typename T> auto _test_approx(const T lhs, const T rhs, const char *description) -> bool
+    template<typename T>
+    auto _test_approx(const T lhs, const T rhs, const char *description, const T epsilon = static_cast<T>(0.001))
+        -> bool
     {
       static_assert(std::is_floating_point_v<T>, "Approx only works for floats/doubles");
+
+      if (lhs == static_cast<T>(0.0) || rhs == static_cast<T>(0.0))
+      {
+        if (std::abs(lhs - rhs) > epsilon)
+        {
+          print_fail(description, to_string(lhs), to_string(rhs));
+          return false;
+        }
+        return true;
+      }
+
       const T diff = std::abs(lhs - rhs);
-      if (diff > static_cast<T>(0.0001))
+      const T larger = std::max(std::abs(lhs), std::abs(rhs));
+
+      if (diff > (larger * epsilon))
       {
         print_fail(description, to_string(lhs), to_string(rhs));
         return false;
@@ -189,9 +204,6 @@ private:
   template<typename T>
   concept ValidBlockClass = std::derived_from<T, Block>;
 
-  // -------------------------------------------------------------------------
-  // Runner
-  // -------------------------------------------------------------------------
   template<bool StopOnFail = false, bool IsVerbose = false> class Runner
   {
 public:
@@ -233,7 +245,22 @@ private:
         std::cout << console::YELLOW << "  Testing " << v.name << "...\n" << console::RESET;
       }
 
-      const bool result = v.functor();
+      bool result = false;
+
+      try
+      {
+        result = v.functor();
+      }
+      catch (const std::exception &e)
+      {
+        std::cout << console::RED << "    [EXCEPTION] " << v.name << ": " << e.what() << console::RESET << "\n";
+        result = false;
+      }
+      catch (...)
+      {
+        std::cout << console::RED << "    [UNKNOWN EXCEPTION] " << v.name << console::RESET << "\n";
+        result = false;
+      }
 
       if (!result)
       {
@@ -271,9 +298,6 @@ private:
 
   using DefaultRunner = Runner<false, true>;
 
-  // -------------------------------------------------------------------------
-  // Registry
-  // -------------------------------------------------------------------------
   class TestRegistry
   {
 public:

@@ -18,6 +18,8 @@ set(TEST_SOURCES
     Utils.cpp
     XML.cpp
 
+    Http/Client.cpp
+
     SIMD/IntVec4.cpp
     SIMD/FloatVec4.cpp
 )

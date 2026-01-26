@@ -18,8 +18,7 @@ set(SRC_FILES
     "imp/cpp/StreamWriter.cpp"
 
     "imp/cpp/Http/Common.cpp"
-    #"imp/cpp/Http/Client.cpp"
-    #"imp/cpp/Http/Server.cpp"
+    "imp/cpp/Http/Client.cpp"
 )
 
 add_library(IACore STATIC ${SRC_FILES})
