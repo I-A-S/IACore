@@ -18,35 +18,40 @@
 #include <IACore/PCH.hpp>
 
 #if IA_ARCH_X64
-#ifdef _MSC_VER
-#include <intrin.h>
-#else
-#include <immintrin.h>
-#endif
+#  ifdef _MSC_VER
+#    include <intrin.h>
+#  else
+#    include <immintrin.h>
+#  endif
 #elif IA_ARCH_ARM64
-#include <arm_acle.h>
+#  include <arm_acle.h>
 #endif
 
-namespace IACore {
-class Platform {
+namespace IACore
+{
+  class Platform
+  {
 public:
-  struct Capabilities {
-    Mut<bool> hardware_crc32 = false;
-  };
+    struct Capabilities
+    {
+      Mut<bool> hardware_crc32 = false;
+    };
 
-  static auto check_cpu() -> bool;
+    static auto check_cpu() -> bool;
 
 #if IA_ARCH_X64
-  static auto cpuid(const i32 function, const i32 sub_function, Mut<i32 *> out)
-      -> void;
+    static auto cpuid(const i32 function, const i32 sub_function, Mut<i32 *> out) -> void;
 #endif
 
-  static auto get_architecture_name() -> const char *;
-  static auto get_operating_system_name() -> const char *;
+    static auto get_architecture_name() -> const char *;
+    static auto get_operating_system_name() -> const char *;
 
-  static auto get_capabilities() -> Ref<Capabilities> { return s_capabilities; }
+    static auto get_capabilities() -> Ref<Capabilities>
+    {
+      return s_capabilities;
+    }
 
 private:
-  static Mut<Capabilities> s_capabilities;
-};
+    static Mut<Capabilities> s_capabilities;
+  };
 } // namespace IACore

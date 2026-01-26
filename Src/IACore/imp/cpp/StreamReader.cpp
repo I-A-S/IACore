@@ -16,70 +16,78 @@
 #include <IACore/FileOps.hpp>
 #include <IACore/StreamReader.hpp>
 
-namespace IACore {
-auto StreamReader::create_from_file(Ref<Path> path) -> Result<StreamReader> {
-  Mut<usize> size = 0;
+namespace IACore
+{
+  auto StreamReader::create_from_file(Ref<Path> path) -> Result<StreamReader>
+  {
+    Mut<usize> size = 0;
 
-  const u8 *ptr = AU_TRY(FileOps::map_file(path, size));
+    const u8 *ptr = AU_TRY(FileOps::map_file(path, size));
 
-  Mut<StreamReader> reader(Span<const u8>(ptr, size));
-  reader.m_storage_type = StorageType::OwningMmap;
+    Mut<StreamReader> reader(Span<const u8>(ptr, size));
+    reader.m_storage_type = StorageType::OwningMmap;
 
-  return reader;
-}
-
-StreamReader::StreamReader(ForwardRef<Vec<u8>> data)
-    : m_owning_vector(std::move(data)),
-      m_storage_type(StorageType::OwningVector) {
-  m_data = m_owning_vector.data();
-  m_data_size = m_owning_vector.size();
-}
-
-StreamReader::StreamReader(const Span<const u8> data)
-    : m_data(data.data()), m_data_size(data.size()),
-      m_storage_type(StorageType::NonOwning) {}
-
-StreamReader::StreamReader(ForwardRef<StreamReader> other)
-    : m_data(other.m_data), m_cursor(other.m_cursor),
-      m_data_size(other.m_data_size),
-      m_owning_vector(std::move(other.m_owning_vector)),
-      m_storage_type(other.m_storage_type) {
-  other.m_storage_type = StorageType::NonOwning;
-  other.m_data = {};
-  other.m_data_size = 0;
-
-  if (m_storage_type == StorageType::OwningVector) {
-    m_data = m_owning_vector.data();
+    return reader;
   }
-}
 
-auto StreamReader::operator=(ForwardRef<StreamReader> other)
-    -> MutRef<StreamReader> {
-  if (this != &other) {
-    if (m_storage_type == StorageType::OwningMmap) {
-      FileOps::unmap_file(m_data);
-    }
+  StreamReader::StreamReader(ForwardRef<Vec<u8>> data)
+      : m_owning_vector(std::move(data)), m_storage_type(StorageType::OwningVector)
+  {
+    m_data = m_owning_vector.data();
+    m_data_size = m_owning_vector.size();
+  }
 
-    m_data = other.m_data;
-    m_cursor = other.m_cursor;
-    m_data_size = other.m_data_size;
-    m_owning_vector = std::move(other.m_owning_vector);
-    m_storage_type = other.m_storage_type;
+  StreamReader::StreamReader(const Span<const u8> data)
+      : m_data(data.data()), m_data_size(data.size()), m_storage_type(StorageType::NonOwning)
+  {
+  }
 
-    if (m_storage_type == StorageType::OwningVector) {
-      m_data = m_owning_vector.data();
-    }
-
+  StreamReader::StreamReader(ForwardRef<StreamReader> other)
+      : m_data(other.m_data), m_cursor(other.m_cursor), m_data_size(other.m_data_size),
+        m_owning_vector(std::move(other.m_owning_vector)), m_storage_type(other.m_storage_type)
+  {
     other.m_storage_type = StorageType::NonOwning;
     other.m_data = {};
     other.m_data_size = 0;
-  }
-  return *this;
-}
 
-StreamReader::~StreamReader() {
-  if (m_storage_type == StorageType::OwningMmap) {
-    FileOps::unmap_file(m_data);
+    if (m_storage_type == StorageType::OwningVector)
+    {
+      m_data = m_owning_vector.data();
+    }
   }
-}
+
+  auto StreamReader::operator=(ForwardRef<StreamReader> other) -> MutRef<StreamReader>
+  {
+    if (this != &other)
+    {
+      if (m_storage_type == StorageType::OwningMmap)
+      {
+        FileOps::unmap_file(m_data);
+      }
+
+      m_data = other.m_data;
+      m_cursor = other.m_cursor;
+      m_data_size = other.m_data_size;
+      m_owning_vector = std::move(other.m_owning_vector);
+      m_storage_type = other.m_storage_type;
+
+      if (m_storage_type == StorageType::OwningVector)
+      {
+        m_data = m_owning_vector.data();
+      }
+
+      other.m_storage_type = StorageType::NonOwning;
+      other.m_data = {};
+      other.m_data_size = 0;
+    }
+    return *this;
+  }
+
+  StreamReader::~StreamReader()
+  {
+    if (m_storage_type == StorageType::OwningMmap)
+    {
+      FileOps::unmap_file(m_data);
+    }
+  }
 } // namespace IACore

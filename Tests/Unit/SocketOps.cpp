@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, SocketOps)
 
-auto test_initialization() -> bool {
+auto test_initialization() -> bool
+{
   IAT_CHECK(SocketOps::is_initialized());
 
   const auto res = SocketOps::initialize();
@@ -33,17 +34,19 @@ auto test_initialization() -> bool {
   return true;
 }
 
-auto test_port_availability() -> bool {
+auto test_port_availability() -> bool
+{
 
   const u16 port = 54321;
 
-  (void)SocketOps::is_port_available_tcp(port);
-  (void)SocketOps::is_port_available_udp(port);
+  (void) SocketOps::is_port_available_tcp(port);
+  (void) SocketOps::is_port_available_udp(port);
 
   return true;
 }
 
-auto test_unix_socket_lifecycle() -> bool {
+auto test_unix_socket_lifecycle() -> bool
+{
   const String socket_path = "iatest_ipc.sock";
 
   SocketOps::unlink_file(socket_path.c_str());
@@ -53,7 +56,8 @@ auto test_unix_socket_lifecycle() -> bool {
   SocketHandle server = *server_res;
 
   auto bind_res = SocketOps::bind_unix_socket(server, socket_path.c_str());
-  if (!bind_res) {
+  if (!bind_res)
+  {
 
     SocketOps::close(server);
     return false;
@@ -66,8 +70,7 @@ auto test_unix_socket_lifecycle() -> bool {
   IAT_CHECK(client_res.has_value());
   SocketHandle client = *client_res;
 
-  auto connect_res =
-      SocketOps::connect_unix_socket(client, socket_path.c_str());
+  auto connect_res = SocketOps::connect_unix_socket(client, socket_path.c_str());
   IAT_CHECK(connect_res.has_value());
 
   SocketOps::close(client);
@@ -77,7 +80,8 @@ auto test_unix_socket_lifecycle() -> bool {
   return true;
 }
 
-auto test_unix_socket_errors() -> bool {
+auto test_unix_socket_errors() -> bool
+{
   const String socket_path = "iatest_missing.sock";
 
   SocketOps::unlink_file(socket_path.c_str());
@@ -86,8 +90,7 @@ auto test_unix_socket_errors() -> bool {
   IAT_CHECK(client_res.has_value());
   SocketHandle client = *client_res;
 
-  auto connect_res =
-      SocketOps::connect_unix_socket(client, socket_path.c_str());
+  auto connect_res = SocketOps::connect_unix_socket(client, socket_path.c_str());
   IAT_CHECK_NOT(connect_res.has_value());
 
   SocketOps::close(client);

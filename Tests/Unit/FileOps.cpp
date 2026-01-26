@@ -20,14 +20,17 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, FileOps)
 
-void cleanup_file(const Path &path) {
+void cleanup_file(const Path &path)
+{
   std::error_code ec;
-  if (std::filesystem::exists(path, ec)) {
+  if (std::filesystem::exists(path, ec))
+  {
     std::filesystem::remove(path, ec);
   }
 }
 
-auto test_text_io() -> bool {
+auto test_text_io() -> bool
+{
   const Path path = "iatest_fileops_text.txt";
   const String content = "Hello IACore FileOps!\nLine 2";
 
@@ -43,7 +46,8 @@ auto test_text_io() -> bool {
   return true;
 }
 
-auto test_binary_io() -> bool {
+auto test_binary_io() -> bool
+{
   const Path path = "iatest_fileops_bin.bin";
   const Vec<u8> content = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0xFF};
 
@@ -55,7 +59,8 @@ auto test_binary_io() -> bool {
   IAT_CHECK(read_res.has_value());
   IAT_CHECK_EQ(read_res->size(), content.size());
 
-  for (usize i = 0; i < content.size(); ++i) {
+  for (usize i = 0; i < content.size(); ++i)
+  {
     IAT_CHECK_EQ((*read_res)[i], content[i]);
   }
 
@@ -63,11 +68,12 @@ auto test_binary_io() -> bool {
   return true;
 }
 
-auto test_file_mapping() -> bool {
+auto test_file_mapping() -> bool
+{
   const Path path = "iatest_fileops_map.txt";
   const String content = "MappedContent";
 
-  (void)FileOps::write_text_file(path, content, true);
+  (void) FileOps::write_text_file(path, content, true);
 
   usize size = 0;
   const auto map_res = FileOps::map_file(path, size);
@@ -86,7 +92,8 @@ auto test_file_mapping() -> bool {
   return true;
 }
 
-auto test_shared_memory() -> bool {
+auto test_shared_memory() -> bool
+{
   const String shm_name = "iatest_shm_block";
   const usize shm_size = 4096;
 
@@ -112,7 +119,8 @@ auto test_shared_memory() -> bool {
   return true;
 }
 
-auto test_stream_integration() -> bool {
+auto test_stream_integration() -> bool
+{
   const Path path = "iatest_fileops_stream.bin";
   cleanup_file(path);
 
@@ -121,8 +129,8 @@ auto test_stream_integration() -> bool {
     IAT_CHECK(writer_res.has_value());
     auto &writer = *writer_res;
 
-    (void)writer.write<u32>(0x12345678);
-    (void)writer.write<u8>(0xFF);
+    (void) writer.write<u32>(0x12345678);
+    (void) writer.write<u8>(0xFF);
   }
 
   {

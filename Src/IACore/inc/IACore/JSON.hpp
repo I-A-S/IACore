@@ -21,99 +21,104 @@
 #include <nlohmann/json.hpp>
 #include <simdjson.h>
 
-namespace IACore {
-class JsonDocument {
+namespace IACore
+{
+  class JsonDocument
+  {
 public:
-  JsonDocument(ForwardRef<JsonDocument>) noexcept = default;
-  auto operator=(ForwardRef<JsonDocument>) noexcept
-      -> MutRef<JsonDocument> = default;
+    JsonDocument(ForwardRef<JsonDocument>) noexcept = default;
+    auto operator=(ForwardRef<JsonDocument>) noexcept -> MutRef<JsonDocument> = default;
 
-  JsonDocument(Ref<JsonDocument>) = delete;
-  auto operator=(Ref<JsonDocument>) -> MutRef<JsonDocument> = delete;
+    JsonDocument(Ref<JsonDocument>) = delete;
+    auto operator=(Ref<JsonDocument>) -> MutRef<JsonDocument> = delete;
 
-  [[nodiscard]]
-  auto root() const noexcept -> simdjson::dom::element {
-    return m_root;
-  }
+    [[nodiscard]]
+    auto root() const noexcept -> simdjson::dom::element
+    {
+      return m_root;
+    }
 
 private:
-  friend class Json;
+    friend class Json;
 
-  JsonDocument(Mut<Box<simdjson::dom::parser>> p, Mut<simdjson::dom::element> r)
-      : m_parser(std::move(p)), m_root(r) {}
+    JsonDocument(Mut<Box<simdjson::dom::parser>> p, Mut<simdjson::dom::element> r) : m_parser(std::move(p)), m_root(r)
+    {
+    }
 
-  Mut<Box<simdjson::dom::parser>> m_parser;
-  Mut<simdjson::dom::element> m_root;
-};
+    Mut<Box<simdjson::dom::parser>> m_parser;
+    Mut<simdjson::dom::element> m_root;
+  };
 
-class Json {
+  class Json
+  {
 private:
-  static constexpr const glz::opts GLAZE_OPTS =
-      glz::opts{.error_on_unknown_keys = false};
+    static constexpr const glz::opts GLAZE_OPTS = glz::opts{.error_on_unknown_keys = false};
 
 public:
-  static auto parse(Ref<String> json_str) -> Result<nlohmann::json>;
-  static auto encode(Ref<nlohmann::json> data) -> String;
+    static auto parse(Ref<String> json_str) -> Result<nlohmann::json>;
+    static auto encode(Ref<nlohmann::json> data) -> String;
 
-  static auto parse_read_only(Ref<String> json_str) -> Result<JsonDocument>;
+    static auto parse_read_only(Ref<String> json_str) -> Result<JsonDocument>;
 
-  template <typename T>
-  static auto parse_to_struct(Ref<String> json_str) -> Result<T>;
+    template<typename T> static auto parse_to_struct(Ref<String> json_str) -> Result<T>;
 
-  template <typename T>
-  static auto encode_struct(Ref<T> data) -> Result<String>;
-};
+    template<typename T> static auto encode_struct(Ref<T> data) -> Result<String>;
+  };
 
-inline auto Json::parse(Ref<String> json_str) -> Result<nlohmann::json> {
-  const nlohmann::json res =
-      nlohmann::json::parse(json_str, nullptr, false, true);
+  inline auto Json::parse(Ref<String> json_str) -> Result<nlohmann::json>
+  {
+    const nlohmann::json res = nlohmann::json::parse(json_str, nullptr, false, true);
 
-  if (res.is_discarded()) {
-    return fail("Failed to parse JSON (Invalid Syntax)");
-  }
-  return res;
-}
-
-inline auto Json::parse_read_only(Ref<String> json_str)
-    -> Result<JsonDocument> {
-  Mut<Box<simdjson::dom::parser>> parser = make_box<simdjson::dom::parser>();
-
-  Mut<simdjson::dom::element> root;
-
-  const simdjson::error_code error = parser->parse(json_str).get(root);
-
-  if (error) {
-    return fail("JSON Error: {}", simdjson::error_message(error));
+    if (res.is_discarded())
+    {
+      return fail("Failed to parse JSON (Invalid Syntax)");
+    }
+    return res;
   }
 
-  return JsonDocument(std::move(parser), root);
-}
+  inline auto Json::parse_read_only(Ref<String> json_str) -> Result<JsonDocument>
+  {
+    Mut<Box<simdjson::dom::parser>> parser = make_box<simdjson::dom::parser>();
 
-inline auto Json::encode(Ref<nlohmann::json> data) -> String {
-  return data.dump();
-}
+    Mut<simdjson::dom::element> root;
 
-template <typename T>
-inline auto Json::parse_to_struct(Ref<String> json_str) -> Result<T> {
-  Mut<T> result{};
+    const simdjson::error_code error = parser->parse(json_str).get(root);
 
-  const glz::error_ctx err = glz::read<GLAZE_OPTS>(result, json_str);
+    if (error)
+    {
+      return fail("JSON Error: {}", simdjson::error_message(error));
+    }
 
-  if (err) {
-    return fail("JSON Struct Parse Error: {}",
-                glz::format_error(err, json_str));
+    return JsonDocument(std::move(parser), root);
   }
-  return result;
-}
 
-template <typename T>
-inline auto Json::encode_struct(Ref<T> data) -> Result<String> {
-  Mut<String> result;
-  const glz::error_ctx err = glz::write_json(data, result);
-
-  if (err) {
-    return fail("JSON Struct Encode Error");
+  inline auto Json::encode(Ref<nlohmann::json> data) -> String
+  {
+    return data.dump();
   }
-  return result;
-}
+
+  template<typename T> inline auto Json::parse_to_struct(Ref<String> json_str) -> Result<T>
+  {
+    Mut<T> result{};
+
+    const glz::error_ctx err = glz::read<GLAZE_OPTS>(result, json_str);
+
+    if (err)
+    {
+      return fail("JSON Struct Parse Error: {}", glz::format_error(err, json_str));
+    }
+    return result;
+  }
+
+  template<typename T> inline auto Json::encode_struct(Ref<T> data) -> Result<String>
+  {
+    Mut<String> result;
+    const glz::error_ctx err = glz::write_json(data, result);
+
+    if (err)
+    {
+      return fail("JSON Struct Encode Error");
+    }
+    return result;
+  }
 } // namespace IACore

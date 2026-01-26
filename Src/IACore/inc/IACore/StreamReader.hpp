@@ -19,88 +19,105 @@
 #include <algorithm>
 #include <cstring>
 
-namespace IACore {
-class StreamReader {
+namespace IACore
+{
+  class StreamReader
+  {
 public:
-  enum class StorageType {
-    NonOwning,
-    OwningMmap,
-    OwningVector,
-  };
+    enum class StorageType
+    {
+      NonOwning,
+      OwningMmap,
+      OwningVector,
+    };
 
-  static auto create_from_file(Ref<Path> path) -> Result<StreamReader>;
+    static auto create_from_file(Ref<Path> path) -> Result<StreamReader>;
 
-  explicit StreamReader(ForwardRef<Vec<u8>> data);
-  explicit StreamReader(const Span<const u8> data);
-  ~StreamReader();
+    explicit StreamReader(ForwardRef<Vec<u8>> data);
+    explicit StreamReader(const Span<const u8> data);
+    ~StreamReader();
 
-  StreamReader(ForwardRef<StreamReader> other);
-  auto operator=(ForwardRef<StreamReader> other) -> MutRef<StreamReader>;
+    StreamReader(ForwardRef<StreamReader> other);
+    auto operator=(ForwardRef<StreamReader> other) -> MutRef<StreamReader>;
 
-  StreamReader(Ref<StreamReader>) = delete;
-  auto operator=(Ref<StreamReader>) -> MutRef<StreamReader> = delete;
+    StreamReader(Ref<StreamReader>) = delete;
+    auto operator=(Ref<StreamReader>) -> MutRef<StreamReader> = delete;
 
-  auto read(Mut<void *> buffer, const usize size) -> Result<void>;
+    auto read(Mut<void *> buffer, const usize size) -> Result<void>;
 
-  template <typename T>
-  [[nodiscard("Check for EOF")]]
-  auto read() -> Result<T>;
+    template<typename T>
+    [[nodiscard("Check for EOF")]]
+    auto read() -> Result<T>;
 
-  auto skip(const usize amount) -> void {
-    m_cursor = std::min(m_cursor + amount, m_data_size);
-  }
+    auto skip(const usize amount) -> void
+    {
+      m_cursor = std::min(m_cursor + amount, m_data_size);
+    }
 
-  auto seek(const usize pos) -> void {
-    m_cursor = (pos > m_data_size) ? m_data_size : pos;
-  }
+    auto seek(const usize pos) -> void
+    {
+      m_cursor = (pos > m_data_size) ? m_data_size : pos;
+    }
 
-  [[nodiscard]] auto cursor() const -> usize { return m_cursor; }
+    [[nodiscard]] auto cursor() const -> usize
+    {
+      return m_cursor;
+    }
 
-  [[nodiscard]] auto size() const -> usize { return m_data_size; }
+    [[nodiscard]] auto size() const -> usize
+    {
+      return m_data_size;
+    }
 
-  [[nodiscard]] auto remaining() const -> usize {
-    return m_data_size - m_cursor;
-  }
+    [[nodiscard]] auto remaining() const -> usize
+    {
+      return m_data_size - m_cursor;
+    }
 
-  [[nodiscard]] auto is_eof() const -> bool { return m_cursor >= m_data_size; }
+    [[nodiscard]] auto is_eof() const -> bool
+    {
+      return m_cursor >= m_data_size;
+    }
 
 private:
-  Mut<const u8 *> m_data = nullptr;
-  Mut<usize> m_cursor = 0;
-  Mut<usize> m_data_size = 0;
-  Mut<Vec<u8>> m_owning_vector;
-  Mut<StorageType> m_storage_type = StorageType::NonOwning;
-};
+    Mut<const u8 *> m_data = nullptr;
+    Mut<usize> m_cursor = 0;
+    Mut<usize> m_data_size = 0;
+    Mut<Vec<u8>> m_owning_vector;
+    Mut<StorageType> m_storage_type = StorageType::NonOwning;
+  };
 
-inline auto StreamReader::read(Mut<void *> buffer, const usize size)
-    -> Result<void> {
-  if (m_cursor + size > m_data_size) [[unlikely]] {
-    return fail("Unexpected EOF while reading");
+  inline auto StreamReader::read(Mut<void *> buffer, const usize size) -> Result<void>
+  {
+    if (m_cursor + size > m_data_size) [[unlikely]]
+    {
+      return fail("Unexpected EOF while reading");
+    }
+
+    std::memcpy(buffer, &m_data[m_cursor], size);
+    m_cursor += size;
+
+    return {};
   }
 
-  std::memcpy(buffer, &m_data[m_cursor], size);
-  m_cursor += size;
+  template<typename T>
+  [[nodiscard("Check for EOF")]]
+  inline auto StreamReader::read() -> Result<T>
+  {
+    static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable to read via memcpy");
 
-  return {};
-}
+    constexpr const usize SIZE = sizeof(T);
 
-template <typename T>
-[[nodiscard("Check for EOF")]]
-inline auto StreamReader::read() -> Result<T> {
-  static_assert(std::is_trivially_copyable_v<T>,
-                "T must be trivially copyable to read via memcpy");
+    if (m_cursor + SIZE > m_data_size) [[unlikely]]
+    {
+      return fail("Unexpected EOF while reading");
+    }
 
-  constexpr const usize SIZE = sizeof(T);
+    Mut<T> value;
+    std::memcpy(&value, &m_data[m_cursor], SIZE);
+    m_cursor += SIZE;
 
-  if (m_cursor + SIZE > m_data_size) [[unlikely]] {
-    return fail("Unexpected EOF while reading");
+    return value;
   }
-
-  Mut<T> value;
-  std::memcpy(&value, &m_data[m_cursor], SIZE);
-  m_cursor += SIZE;
-
-  return value;
-}
 
 } // namespace IACore

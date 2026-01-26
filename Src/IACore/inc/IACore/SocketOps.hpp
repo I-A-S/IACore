@@ -18,99 +18,109 @@
 #include <IACore/PCH.hpp>
 
 #if IA_PLATFORM_WINDOWS
-#include <afunix.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <afunix.h>
+#  pragma comment(lib, "ws2_32.lib")
 #elif IA_PLATFORM_UNIX
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/un.h>
-#ifndef INVALID_SOCKET
-#define INVALID_SOCKET -1
-#endif
+#  include <netinet/in.h>
+#  include <sys/socket.h>
+#  include <sys/types.h>
+#  include <sys/un.h>
+#  ifndef INVALID_SOCKET
+#    define INVALID_SOCKET -1
+#  endif
 #else
-#error "IACore SocketOps is not supported on this platform."
+#  error "IACore SocketOps is not supported on this platform."
 #endif
 
-namespace IACore {
+namespace IACore
+{
 #if IA_PLATFORM_WINDOWS
-using SocketHandle = SOCKET;
+  using SocketHandle = SOCKET;
 #elif IA_PLATFORM_UNIX
-using SocketHandle = i32;
+  using SocketHandle = i32;
 #endif
 
-class SocketOps {
+  class SocketOps
+  {
 public:
-  // SocketOps correctly handles multiple calls to initialize and terminate.
-  // Make sure every initialize call is paired with a corresponding terminate
-  // call.
-  static auto initialize() -> Result<void> {
-    s_init_count++;
-    if (s_init_count > 1) {
+    // SocketOps correctly handles multiple calls to initialize and terminate.
+    // Make sure every initialize call is paired with a corresponding terminate
+    // call.
+    static auto initialize() -> Result<void>
+    {
+      s_init_count++;
+      if (s_init_count > 1)
+      {
+        return {};
+      }
+#if IA_PLATFORM_WINDOWS
+      Mut<WSADATA> wsa_data;
+      const i32 res = WSAStartup(MAKEWORD(2, 2), &wsa_data);
+      if (res != 0)
+      {
+        s_init_count--;
+        return fail("WSAStartup failed with error: {}", res);
+      }
+#endif
       return {};
     }
-#if IA_PLATFORM_WINDOWS
-    Mut<WSADATA> wsa_data;
-    const i32 res = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-    if (res != 0) {
+
+    // SocketOps correctly handles multiple calls to initialize and terminate.
+    // Make sure every initialize call is paired with a corresponding terminate
+    // call.
+    static auto terminate() -> void
+    {
       s_init_count--;
-      return fail("WSAStartup failed with error: {}", res);
-    }
-#endif
-    return {};
-  }
-
-  // SocketOps correctly handles multiple calls to initialize and terminate.
-  // Make sure every initialize call is paired with a corresponding terminate
-  // call.
-  static auto terminate() -> void {
-    s_init_count--;
-    if (s_init_count > 0) {
-      return;
-    }
+      if (s_init_count > 0)
+      {
+        return;
+      }
 #if IA_PLATFORM_WINDOWS
-    WSACleanup();
+      WSACleanup();
 #endif
-  }
+    }
 
-  static auto is_initialized() -> bool { return s_init_count > 0; }
+    static auto is_initialized() -> bool
+    {
+      return s_init_count > 0;
+    }
 
-  static auto is_port_available_tcp(const u16 port) -> bool {
-    return is_port_available(port, SOCK_STREAM);
-  }
+    static auto is_port_available_tcp(const u16 port) -> bool
+    {
+      return is_port_available(port, SOCK_STREAM);
+    }
 
-  static auto is_port_available_udp(const u16 port) -> bool {
-    return is_port_available(port, SOCK_DGRAM);
-  }
+    static auto is_port_available_udp(const u16 port) -> bool
+    {
+      return is_port_available(port, SOCK_DGRAM);
+    }
 
-  static auto is_would_block() -> bool;
+    static auto is_would_block() -> bool;
 
-  static auto close(const SocketHandle sock) -> void;
+    static auto close(const SocketHandle sock) -> void;
 
-  static auto listen(const SocketHandle sock, const i32 queue_size = 5)
-      -> Result<void>;
+    static auto listen(const SocketHandle sock, const i32 queue_size = 5) -> Result<void>;
 
-  static auto create_unix_socket() -> Result<SocketHandle>;
+    static auto create_unix_socket() -> Result<SocketHandle>;
 
-  static auto bind_unix_socket(const SocketHandle sock, const char *path)
-      -> Result<void>;
-  static auto connect_unix_socket(const SocketHandle sock, const char *path)
-      -> Result<void>;
+    static auto bind_unix_socket(const SocketHandle sock, const char *path) -> Result<void>;
+    static auto connect_unix_socket(const SocketHandle sock, const char *path) -> Result<void>;
 
-  static auto unlink_file(const char *path) -> void {
+    static auto unlink_file(const char *path) -> void
+    {
 #if IA_PLATFORM_WINDOWS
-    DeleteFileA(path);
+      DeleteFileA(path);
 #elif IA_PLATFORM_UNIX
-    unlink(path);
+      unlink(path);
 #endif
-  }
+    }
 
 private:
-  static auto is_port_available(const u16 port, const i32 type) -> bool;
+    static auto is_port_available(const u16 port, const i32 type) -> bool;
 
 private:
-  static Mut<i32> s_init_count;
-};
+    static Mut<i32> s_init_count;
+  };
 } // namespace IACore

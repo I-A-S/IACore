@@ -20,51 +20,57 @@
 #include <functional>
 #include <stop_token>
 
-namespace IACore {
-class AsyncOps {
+namespace IACore
+{
+  class AsyncOps
+  {
 public:
-  using TaskTag = u64;
-  using WorkerId = u16;
+    using TaskTag = u64;
+    using WorkerId = u16;
 
-  static constexpr const WorkerId MAIN_THREAD_WORKER_ID = 0;
+    static constexpr const WorkerId MAIN_THREAD_WORKER_ID = 0;
 
-  enum class Priority : u8 { High, Normal };
+    enum class Priority : u8
+    {
+      High,
+      Normal
+    };
 
-  struct Schedule {
-    Mut<std::atomic<i32>> counter{0};
-  };
+    struct Schedule
+    {
+      Mut<std::atomic<i32>> counter{0};
+    };
 
 public:
-  static auto initialize_scheduler(const u8 worker_count = 0) -> Result<void>;
-  static auto terminate_scheduler() -> void;
+    static auto initialize_scheduler(const u8 worker_count = 0) -> Result<void>;
+    static auto terminate_scheduler() -> void;
 
-  static auto schedule_task(Mut<std::function<void(const WorkerId)>> task,
-                            const TaskTag tag, Mut<Schedule *> schedule,
-                            const Priority priority = Priority::Normal) -> void;
+    static auto schedule_task(Mut<std::function<void(const WorkerId)>> task, const TaskTag tag,
+                              Mut<Schedule *> schedule, const Priority priority = Priority::Normal) -> void;
 
-  static auto cancel_tasks_of_tag(const TaskTag tag) -> void;
+    static auto cancel_tasks_of_tag(const TaskTag tag) -> void;
 
-  static auto wait_for_schedule_completion(Mut<Schedule *> schedule) -> void;
+    static auto wait_for_schedule_completion(Mut<Schedule *> schedule) -> void;
 
-  static auto run_task(Mut<std::function<void()>> task) -> void;
+    static auto run_task(Mut<std::function<void()>> task) -> void;
 
-  IA_NODISCARD static auto get_worker_count() -> WorkerId;
+    IA_NODISCARD static auto get_worker_count() -> WorkerId;
 
 private:
-  struct ScheduledTask {
-    Mut<TaskTag> tag{};
-    Mut<Schedule *> schedule_handle{};
-    Mut<std::function<void(const WorkerId)>> task{};
-  };
+    struct ScheduledTask
+    {
+      Mut<TaskTag> tag{};
+      Mut<Schedule *> schedule_handle{};
+      Mut<std::function<void(const WorkerId)>> task{};
+    };
 
-  static auto schedule_worker_loop(Mut<std::stop_token> stop_token,
-                                   const WorkerId worker_id) -> void;
+    static auto schedule_worker_loop(Mut<std::stop_token> stop_token, const WorkerId worker_id) -> void;
 
 private:
-  static Mut<std::mutex> s_queue_mutex;
-  static Mut<std::condition_variable> s_wake_condition;
-  static Mut<Vec<std::jthread>> s_schedule_workers;
-  static Mut<std::deque<ScheduledTask>> s_high_priority_queue;
-  static Mut<std::deque<ScheduledTask>> s_normal_priority_queue;
-};
+    static Mut<std::mutex> s_queue_mutex;
+    static Mut<std::condition_variable> s_wake_condition;
+    static Mut<Vec<std::jthread>> s_schedule_workers;
+    static Mut<std::deque<ScheduledTask>> s_high_priority_queue;
+    static Mut<std::deque<ScheduledTask>> s_normal_priority_queue;
+  };
 } // namespace IACore

@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, RingBuffer)
 
-auto test_push_pop() -> bool {
+auto test_push_pop() -> bool
+{
 
   Vec<u8> memory(sizeof(RingBufferView::ControlBlock) + 1024);
 
@@ -33,8 +34,7 @@ auto test_push_pop() -> bool {
   auto consumer = std::move(*consumer_res);
 
   String msg = "Hello RingBuffer";
-  const auto push_res = producer.push(
-      1, Span<const u8>(reinterpret_cast<const u8 *>(msg.data()), msg.size()));
+  const auto push_res = producer.push(1, Span<const u8>(reinterpret_cast<const u8 *>(msg.data()), msg.size()));
   IAT_CHECK(push_res.has_value());
 
   RingBufferView::PacketHeader header;
@@ -57,7 +57,8 @@ auto test_push_pop() -> bool {
   return true;
 }
 
-auto test_wrap_around() -> bool {
+auto test_wrap_around() -> bool
+{
 
   Vec<u8> memory(sizeof(RingBufferView::ControlBlock) + 100);
 
@@ -87,8 +88,10 @@ auto test_wrap_around() -> bool {
   IAT_CHECK_EQ(pop_size, static_cast<usize>(40));
 
   bool match = true;
-  for (usize i = 0; i < 40; i++) {
-    if (out_buf[i] != 0xAA) {
+  for (usize i = 0; i < 40; i++)
+  {
+    if (out_buf[i] != 0xAA)
+    {
       match = false;
     }
   }

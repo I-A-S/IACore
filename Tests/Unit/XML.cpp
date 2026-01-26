@@ -21,7 +21,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, XML)
 
-auto test_parse_string() -> bool {
+auto test_parse_string() -> bool
+{
   const String xml_content = R"(
         <root>
             <item id="1">Value1</item>
@@ -47,14 +48,16 @@ auto test_parse_string() -> bool {
   return true;
 }
 
-auto test_parse_error() -> bool {
+auto test_parse_error() -> bool
+{
   const String invalid_xml = "<root><unclosed>";
   auto res = XML::parse_from_string(invalid_xml);
   IAT_CHECK_NOT(res.has_value());
   return true;
 }
 
-auto test_serialize() -> bool {
+auto test_serialize() -> bool
+{
   const String xml_content = "<root><node>Text</node></root>";
   auto res = XML::parse_from_string(xml_content);
   IAT_CHECK(res.has_value());
@@ -67,7 +70,8 @@ auto test_serialize() -> bool {
   return true;
 }
 
-auto test_escape() -> bool {
+auto test_escape() -> bool
+{
   const String raw = "< & > \" '";
   const String escaped = XML::escape_xml_string(raw);
 
@@ -80,7 +84,8 @@ auto test_escape() -> bool {
   return true;
 }
 
-auto test_file_io() -> bool {
+auto test_file_io() -> bool
+{
   const Path path = "test_temp_xml_doc.xml";
   const String content = "<config><ver>1.0</ver></config>";
 
@@ -91,8 +96,7 @@ auto test_file_io() -> bool {
   IAT_CHECK(parse_res.has_value());
 
   auto &doc = *parse_res;
-  IAT_CHECK_EQ(String(doc.child("config").child("ver").child_value()),
-               String("1.0"));
+  IAT_CHECK_EQ(String(doc.child("config").child("ver").child_value()), String("1.0"));
 
   std::filesystem::remove(path);
 

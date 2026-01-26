@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, StringOps)
 
-auto test_base64_encode() -> bool {
+auto test_base64_encode() -> bool
+{
 
   {
     const String s = "Hello World";
@@ -58,13 +59,13 @@ auto test_base64_encode() -> bool {
   return true;
 }
 
-auto test_base64_decode() -> bool {
+auto test_base64_decode() -> bool
+{
 
   {
     const String encoded = "SGVsbG8gV29ybGQ=";
     const Vec<u8> decoded = StringOps::decode_base64(encoded);
-    const String result(reinterpret_cast<const char *>(decoded.data()),
-                        decoded.size());
+    const String result(reinterpret_cast<const char *>(decoded.data()), decoded.size());
     IAT_CHECK_EQ(result, String("Hello World"));
   }
 
@@ -76,10 +77,12 @@ auto test_base64_decode() -> bool {
   return true;
 }
 
-auto test_base64_round_trip() -> bool {
+auto test_base64_round_trip() -> bool
+{
   Vec<u8> original;
   original.reserve(256);
-  for (usize i = 0; i < 256; ++i) {
+  for (usize i = 0; i < 256; ++i)
+  {
     original.push_back(static_cast<u8>(i));
   }
 
@@ -89,8 +92,10 @@ auto test_base64_round_trip() -> bool {
   IAT_CHECK_EQ(original.size(), decoded.size());
 
   bool match = true;
-  for (usize i = 0; i < original.size(); ++i) {
-    if (original[i] != decoded[i]) {
+  for (usize i = 0; i < original.size(); ++i)
+  {
+    if (original[i] != decoded[i])
+    {
       match = false;
       break;
     }

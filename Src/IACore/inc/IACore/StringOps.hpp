@@ -17,10 +17,12 @@
 
 #include <IACore/PCH.hpp>
 
-namespace IACore {
-class StringOps {
+namespace IACore
+{
+  class StringOps
+  {
 public:
-  static auto encode_base64(const Span<const u8> data) -> String;
-  static auto decode_base64(Ref<String> data) -> Vec<u8>;
-};
+    static auto encode_base64(const Span<const u8> data) -> String;
+    static auto decode_base64(Ref<String> data) -> Vec<u8>;
+  };
 } // namespace IACore

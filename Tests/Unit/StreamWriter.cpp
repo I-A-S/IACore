@@ -21,7 +21,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, StreamWriter)
 
-auto test_memory_writer() -> bool {
+auto test_memory_writer() -> bool
+{
   StreamWriter writer;
 
   IAT_CHECK(writer.write(static_cast<u8>(0xAA), 1).has_value());
@@ -39,7 +40,8 @@ auto test_memory_writer() -> bool {
   return true;
 }
 
-auto test_fixed_buffer() -> bool {
+auto test_fixed_buffer() -> bool
+{
   u8 buffer[4] = {0};
   StreamWriter writer(Span<u8>(buffer, 4));
 
@@ -60,10 +62,12 @@ auto test_fixed_buffer() -> bool {
   return true;
 }
 
-auto test_file_writer() -> bool {
+auto test_file_writer() -> bool
+{
   const Path path = "test_stream_writer.bin";
 
-  if (std::filesystem::exists(path)) {
+  if (std::filesystem::exists(path))
+  {
     std::filesystem::remove(path);
   }
 
@@ -81,8 +85,7 @@ auto test_file_writer() -> bool {
   auto read_res = FileOps::read_binary_file(path);
   IAT_CHECK(read_res.has_value());
 
-  const String read_str(reinterpret_cast<const char *>(read_res->data()),
-                        read_res->size());
+  const String read_str(reinterpret_cast<const char *>(read_res->data()), read_res->size());
   IAT_CHECK_EQ(read_str, String("Hello World"));
 
   std::filesystem::remove(path);
@@ -90,7 +93,8 @@ auto test_file_writer() -> bool {
   return true;
 }
 
-auto test_primitives() -> bool {
+auto test_primitives() -> bool
+{
   StreamWriter writer;
 
   const f32 f = 1.5f;

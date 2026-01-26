@@ -23,7 +23,17 @@ IAT_BEGIN_BLOCK(Core, Logger)
 
 static constexpr const char *LOG_FILE = "iacore_test_log.txt";
 
-auto test_file_logging() -> bool {
+void cleanup_file(const Path &path)
+{
+  std::error_code ec;
+  if (std::filesystem::exists(path, ec))
+  {
+    std::filesystem::remove(path, ec);
+  }
+}
+
+auto test_file_logging() -> bool
+{
 
   const auto res = Logger::enable_logging_to_disk(LOG_FILE);
   IAT_CHECK(res.has_value());
@@ -41,9 +51,10 @@ auto test_file_logging() -> bool {
   Logger::flush_logs();
 
   auto read_res = FileOps::read_text_file(LOG_FILE);
-  if (!read_res) {
-    std::cout << console::YELLOW << "    Warning: Could not read log file ("
-              << read_res.error() << "). Skipping verification.\n"
+  if (!read_res)
+  {
+    std::cout << console::YELLOW << "    Warning: Could not read log file (" << read_res.error()
+              << "). Skipping verification.\n"
               << console::RESET;
     return true;
   }
@@ -58,10 +69,13 @@ auto test_file_logging() -> bool {
   IAT_CHECK(content.find("ERROR") != String::npos);
   IAT_CHECK(content.find("WARN") != String::npos);
 
+  cleanup_file(LOG_FILE);
+
   return true;
 }
 
-auto test_log_levels() -> bool {
+auto test_log_levels() -> bool
+{
 
   Logger::set_log_level(Logger::LogLevel::Warn);
 
@@ -74,7 +88,8 @@ auto test_log_levels() -> bool {
   Logger::flush_logs();
 
   auto read_res = FileOps::read_text_file(LOG_FILE);
-  if (!read_res) {
+  if (!read_res)
+  {
     return true;
   }
 
@@ -87,7 +102,8 @@ auto test_log_levels() -> bool {
   return true;
 }
 
-auto test_formatting() -> bool {
+auto test_formatting() -> bool
+{
   Logger::set_log_level(Logger::LogLevel::Info);
 
   const String name = "IACore";
@@ -97,7 +113,8 @@ auto test_formatting() -> bool {
   Logger::flush_logs();
 
   auto read_res = FileOps::read_text_file(LOG_FILE);
-  if (!read_res) {
+  if (!read_res)
+  {
     return true;
   }
 

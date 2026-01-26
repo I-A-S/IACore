@@ -20,18 +20,15 @@
 
 using namespace IACore;
 
-IACORE_MAIN() {
-  (void)args;
+IACORE_MAIN()
+{
+  (void) args;
 
   AU_TRY_PURE(SocketOps::initialize());
 
-  std::cout
-      << console::GREEN
-      << "\n===============================================================\n";
+  std::cout << console::GREEN << "\n===============================================================\n";
   std::cout << "   IACore (Independent Architecture Core) - Unit Test Suite\n";
-  std::cout
-      << "===============================================================\n"
-      << console::RESET << "\n";
+  std::cout << "===============================================================\n" << console::RESET << "\n";
 
   const i32 result = Test::TestRegistry::run_all();
 

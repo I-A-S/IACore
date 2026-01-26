@@ -17,55 +17,64 @@
 
 #include <IACore/PCH.hpp>
 
-namespace IACore {
+namespace IACore
+{
 
-class StreamWriter {
+  class StreamWriter
+  {
 public:
-  enum class StorageType {
-    NonOwning,
-    OwningFile,
-    OwningVector,
+    enum class StorageType
+    {
+      NonOwning,
+      OwningFile,
+      OwningVector,
+    };
+
+    static auto create_from_file(Ref<Path> path) -> Result<StreamWriter>;
+
+    StreamWriter();
+    explicit StreamWriter(const Span<u8> data);
+
+    StreamWriter(ForwardRef<StreamWriter> other);
+    auto operator=(ForwardRef<StreamWriter> other) -> MutRef<StreamWriter>;
+
+    StreamWriter(Ref<StreamWriter>) = delete;
+    auto operator=(Ref<StreamWriter>) -> MutRef<StreamWriter> = delete;
+
+    ~StreamWriter();
+
+    auto write(const u8 byte, const usize count) -> Result<void>;
+    auto write(const void *buffer, const usize size) -> Result<void>;
+
+    template<typename T> auto write(Ref<T> value) -> Result<void>;
+
+    [[nodiscard]] auto data() const -> const u8 *
+    {
+      return m_buffer;
+    }
+
+    [[nodiscard]] auto cursor() const -> usize
+    {
+      return m_cursor;
+    }
+
+    auto flush() -> Result<void>;
+
+private:
+    Mut<u8 *> m_buffer = nullptr;
+    Mut<usize> m_cursor = 0;
+    Mut<usize> m_capacity = 0;
+    Mut<Path> m_file_path;
+    Mut<Vec<u8>> m_owning_vector;
+    Mut<StorageType> m_storage_type = StorageType::OwningVector;
+
+private:
+    auto flush_to_disk() -> Result<void>;
   };
 
-  static auto create_from_file(Ref<Path> path) -> Result<StreamWriter>;
-
-  StreamWriter();
-  explicit StreamWriter(const Span<u8> data);
-
-  StreamWriter(ForwardRef<StreamWriter> other);
-  auto operator=(ForwardRef<StreamWriter> other) -> MutRef<StreamWriter>;
-
-  StreamWriter(Ref<StreamWriter>) = delete;
-  auto operator=(Ref<StreamWriter>) -> MutRef<StreamWriter> = delete;
-
-  ~StreamWriter();
-
-  auto write(const u8 byte, const usize count) -> Result<void>;
-  auto write(const void *buffer, const usize size) -> Result<void>;
-
-  template <typename T> auto write(Ref<T> value) -> Result<void>;
-
-  [[nodiscard]] auto data() const -> const u8 * { return m_buffer; }
-
-  [[nodiscard]] auto cursor() const -> usize { return m_cursor; }
-
-  auto flush() -> Result<void>;
-
-private:
-  Mut<u8 *> m_buffer = nullptr;
-  Mut<usize> m_cursor = 0;
-  Mut<usize> m_capacity = 0;
-  Mut<Path> m_file_path;
-  Mut<Vec<u8>> m_owning_vector;
-  Mut<StorageType> m_storage_type = StorageType::OwningVector;
-
-private:
-  auto flush_to_disk() -> Result<void>;
-};
-
-template <typename T>
-inline auto StreamWriter::write(Ref<T> value) -> Result<void> {
-  return write(&value, sizeof(T));
-}
+  template<typename T> inline auto StreamWriter::write(Ref<T> value) -> Result<void>
+  {
+    return write(&value, sizeof(T));
+  }
 
 } // namespace IACore

@@ -18,21 +18,23 @@
 
 using namespace IACore;
 
-struct UserProfile {
+struct UserProfile
+{
   String username;
   u32 id;
   bool is_active;
   Vec<String> roles;
 
-  bool operator==(const UserProfile &other) const {
-    return username == other.username && id == other.id &&
-           is_active == other.is_active && roles == other.roles;
+  bool operator==(const UserProfile &other) const
+  {
+    return username == other.username && id == other.id && is_active == other.is_active && roles == other.roles;
   }
 };
 
 IAT_BEGIN_BLOCK(Core, JSON)
 
-auto test_dynamic_parse() -> bool {
+auto test_dynamic_parse() -> bool
+{
   const String json_text = R"({
         "string": "Hello World",
         "int": 42,
@@ -69,7 +71,8 @@ auto test_dynamic_parse() -> bool {
   return true;
 }
 
-auto test_dynamic_encode() -> bool {
+auto test_dynamic_encode() -> bool
+{
   nlohmann::json j;
   j["name"] = "IACore";
   j["version"] = 2;
@@ -83,18 +86,17 @@ auto test_dynamic_encode() -> bool {
   return true;
 }
 
-auto test_parse_invalid() -> bool {
+auto test_parse_invalid() -> bool
+{
   const String bad_json = "{ key: value }";
   auto res = Json::parse(bad_json);
   IAT_CHECK_NOT(res.has_value());
   return true;
 }
 
-auto test_struct_round_trip() -> bool {
-  UserProfile original{.username = "test_user",
-                       .id = 12345,
-                       .is_active = true,
-                       .roles = {"admin", "editor"}};
+auto test_struct_round_trip() -> bool
+{
+  UserProfile original{.username = "test_user", .id = 12345, .is_active = true, .roles = {"admin", "editor"}};
 
   auto encode_res = Json::encode_struct(original);
   IAT_CHECK(encode_res.has_value());
@@ -112,14 +114,16 @@ auto test_struct_round_trip() -> bool {
   return true;
 }
 
-auto test_struct_parse_error() -> bool {
+auto test_struct_parse_error() -> bool
+{
   const String malformed = "{ broken_json: ";
   auto res = Json::parse_to_struct<UserProfile>(malformed);
   IAT_CHECK_NOT(res.has_value());
   return true;
 }
 
-auto test_read_only() -> bool {
+auto test_read_only() -> bool
+{
   const String json_text = R"({
         "id": 999,
         "name": "Simd",

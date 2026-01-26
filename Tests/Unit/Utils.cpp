@@ -18,10 +18,12 @@
 
 using namespace IACore;
 
-struct TestVec3 {
+struct TestVec3
+{
   f32 x, y, z;
 
-  bool operator==(const TestVec3 &other) const {
+  bool operator==(const TestVec3 &other) const
+  {
     return x == other.x && y == other.y && z == other.z;
   }
 };
@@ -30,7 +32,8 @@ IA_MAKE_HASHABLE(TestVec3, &TestVec3::x, &TestVec3::y, &TestVec3::z);
 
 IAT_BEGIN_BLOCK(Core, Utils)
 
-auto test_hex_conversion() -> bool {
+auto test_hex_conversion() -> bool
+{
 
   u8 bin[] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0xFF};
   String hex = Utils::binary_to_hex_string(bin);
@@ -57,7 +60,8 @@ auto test_hex_conversion() -> bool {
   return true;
 }
 
-auto test_hex_errors() -> bool {
+auto test_hex_errors() -> bool
+{
 
   auto odd = Utils::hex_string_to_binary("ABC");
   IAT_CHECK_NOT(odd.has_value());
@@ -72,7 +76,8 @@ auto test_hex_errors() -> bool {
   return true;
 }
 
-auto test_sort() -> bool {
+auto test_sort() -> bool
+{
   Vec<i32> nums = {5, 1, 4, 2, 3};
 
   Utils::sort(nums);
@@ -86,7 +91,8 @@ auto test_sort() -> bool {
   return true;
 }
 
-auto test_binary_search() -> bool {
+auto test_binary_search() -> bool
+{
 
   Vec<i32> nums = {10, 20, 20, 20, 30};
 
@@ -106,7 +112,8 @@ auto test_binary_search() -> bool {
   return true;
 }
 
-auto test_hash_basics() -> bool {
+auto test_hash_basics() -> bool
+{
   u64 h1 = Utils::compute_hash(10, 20.5f, "Hello");
   u64 h2 = Utils::compute_hash(10, 20.5f, "Hello");
   u64 h3 = Utils::compute_hash(10, 20.5f, "World");
@@ -122,7 +129,8 @@ auto test_hash_basics() -> bool {
   return true;
 }
 
-auto test_hash_macro() -> bool {
+auto test_hash_macro() -> bool
+{
   TestVec3 v1{1.0f, 2.0f, 3.0f};
   TestVec3 v2{1.0f, 2.0f, 3.0f};
   TestVec3 v3{1.0f, 2.0f, 4.0f};

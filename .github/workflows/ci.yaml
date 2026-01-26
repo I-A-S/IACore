@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "win-build-fix" ]
   pull_request:
     branches: [ "main" ]
 
@@ -18,11 +18,32 @@ jobs:
       fail-fast: false
       matrix:
         target: [x64-linux]
+        
     steps:
       - uses: actions/checkout@v4
 
       - name: Install OpenSSL v3 (System)
         run: sudo dnf install -y openssl-devel
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.target }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.target }} --config Release
+
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x64-windows]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure
         run: cmake --preset ${{ matrix.target }}
