@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 project(IACore LANGUAGES C CXX)
+enable_testing()
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(IACORE_IS_TOP_LEVEL ON)
@@ -34,8 +35,4 @@ add_subdirectory(Src)
 
 if(IACore_BUILD_TESTS)
     add_subdirectory(Tests)
-endif()
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Sandbox")
-   # add_subdirectory(Sandbox)
 endif()
