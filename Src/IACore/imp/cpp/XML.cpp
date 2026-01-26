@@ -16,67 +16,76 @@
 #include <IACore/XML.hpp>
 #include <sstream>
 
-namespace IACore {
+namespace IACore
+{
 
-auto XML::parse_from_string(Ref<String> data) -> Result<Document> {
-  Mut<Document> doc;
-  const pugi::xml_parse_result parse_result = doc.load_string(data.c_str());
-  if (!parse_result) {
-    return fail("Failed to parse XML {}", parse_result.description());
-  }
-  return std::move(doc);
-}
-
-auto XML::parse_from_file(Ref<Path> path) -> Result<Document> {
-  Mut<Document> doc;
-  const pugi::xml_parse_result parse_result =
-      doc.load_file(path.string().c_str());
-  if (!parse_result) {
-    return fail("Failed to parse XML {}", parse_result.description());
-  }
-  return std::move(doc);
-}
-
-auto XML::serialize_to_string(Ref<Node> node, const bool escape) -> String {
-  Mut<std::ostringstream> oss;
-  node.print(oss);
-  return escape ? escape_xml_string(oss.str()) : oss.str();
-}
-
-auto XML::serialize_to_string(Ref<Document> doc, const bool escape) -> String {
-  Mut<std::ostringstream> oss;
-  doc.save(oss);
-  return escape ? escape_xml_string(oss.str()) : oss.str();
-}
-
-auto XML::escape_xml_string(Ref<String> xml) -> String {
-  Mut<String> buffer;
-  buffer.reserve(xml.size() + (xml.size() / 10));
-
-  for (const char c : xml) {
-    switch (c) {
-    case '&':
-      buffer.append("&amp;");
-      break;
-    case '\"':
-      buffer.append("&quot;");
-      break;
-    case '\'':
-      buffer.append("&apos;");
-      break;
-    case '<':
-      buffer.append("&lt;");
-      break;
-    case '>':
-      buffer.append("&gt;");
-      break;
-    default:
-      buffer.push_back(c);
-      break;
+  auto XML::parse_from_string(Ref<String> data) -> Result<Document>
+  {
+    Mut<Document> doc;
+    const pugi::xml_parse_result parse_result = doc.load_string(data.c_str());
+    if (!parse_result)
+    {
+      return fail("Failed to parse XML {}", parse_result.description());
     }
+    return std::move(doc);
   }
 
-  return buffer;
-}
+  auto XML::parse_from_file(Ref<Path> path) -> Result<Document>
+  {
+    Mut<Document> doc;
+    const pugi::xml_parse_result parse_result = doc.load_file(path.string().c_str());
+    if (!parse_result)
+    {
+      return fail("Failed to parse XML {}", parse_result.description());
+    }
+    return std::move(doc);
+  }
+
+  auto XML::serialize_to_string(Ref<Node> node, const bool escape) -> String
+  {
+    Mut<std::ostringstream> oss;
+    node.print(oss);
+    return escape ? escape_xml_string(oss.str()) : oss.str();
+  }
+
+  auto XML::serialize_to_string(Ref<Document> doc, const bool escape) -> String
+  {
+    Mut<std::ostringstream> oss;
+    doc.save(oss);
+    return escape ? escape_xml_string(oss.str()) : oss.str();
+  }
+
+  auto XML::escape_xml_string(Ref<String> xml) -> String
+  {
+    Mut<String> buffer;
+    buffer.reserve(xml.size() + (xml.size() / 10));
+
+    for (const char c : xml)
+    {
+      switch (c)
+      {
+      case '&':
+        buffer.append("&amp;");
+        break;
+      case '\"':
+        buffer.append("&quot;");
+        break;
+      case '\'':
+        buffer.append("&apos;");
+        break;
+      case '<':
+        buffer.append("&lt;");
+        break;
+      case '>':
+        buffer.append("&gt;");
+        break;
+      default:
+        buffer.push_back(c);
+        break;
+      }
+    }
+
+    return buffer;
+  }
 
 } // namespace IACore

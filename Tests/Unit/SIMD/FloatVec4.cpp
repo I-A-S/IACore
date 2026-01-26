@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, FloatVec4)
 
-auto test_float_arithmetic() -> bool {
+auto test_float_arithmetic() -> bool
+{
   FloatVec4 v1(10.0f, 20.0f, 30.0f, 40.0f);
   FloatVec4 v2(2.0f, 4.0f, 5.0f, 8.0f);
 
@@ -39,7 +40,8 @@ auto test_float_arithmetic() -> bool {
   return true;
 }
 
-auto test_math_helpers() -> bool {
+auto test_math_helpers() -> bool
+{
   alignas(16) f32 res[4];
 
   FloatVec4 v_sq(4.0f, 9.0f, 16.0f, 25.0f);
@@ -61,7 +63,8 @@ auto test_math_helpers() -> bool {
   return true;
 }
 
-auto test_approx_math() -> bool {
+auto test_approx_math() -> bool
+{
   alignas(16) f32 res[4];
   FloatVec4 v(16.0f, 25.0f, 100.0f, 1.0f);
 
@@ -73,7 +76,8 @@ auto test_approx_math() -> bool {
   return true;
 }
 
-auto test_linear_algebra() -> bool {
+auto test_linear_algebra() -> bool
+{
   FloatVec4 v1(1.0f, 2.0f, 3.0f, 4.0f);
   FloatVec4 v2(1.0f, 0.0f, 1.0f, 0.0f);
 

@@ -47,10 +47,19 @@
       }
     },
     {
-      "name": "wasm",
+      "name": "wasm32-emscripten",
       "displayName": "IACore WebAssembly (Clang)",
       "inherits": "iacore-base",
       "cacheVariables": {}
+    },
+    {
+      "name": "x64-windows-cross",
+      "displayName": "IACore Windows x64 Cross (Linux Host) (Clang)",
+      "inherits": "iacore-base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      }
     }
   ],
   "buildPresets": [
@@ -71,8 +80,12 @@
       "configurePreset": "arm64-windows"
     },
     {
-      "name": "wasm",
-      "configurePreset": "wasm"
+      "name": "wasm32-emscripten",
+      "configurePreset": "wasm32-emscripten"
+    },
+    {
+      "name": "x64-windows-cross",
+      "configurePreset": "x64-windows-cross"
     }
   ]
 }

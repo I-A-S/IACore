@@ -21,7 +21,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, Platform)
 
-auto test_os_name() -> bool {
+auto test_os_name() -> bool
+{
   const char *os_name = Platform::get_operating_system_name();
   IAT_CHECK(os_name != nullptr);
 
@@ -41,7 +42,8 @@ auto test_os_name() -> bool {
   return true;
 }
 
-auto test_arch_name() -> bool {
+auto test_arch_name() -> bool
+{
   const char *arch_name = Platform::get_architecture_name();
   IAT_CHECK(arch_name != nullptr);
 
@@ -59,7 +61,8 @@ auto test_arch_name() -> bool {
   return true;
 }
 
-auto test_capabilities() -> bool {
+auto test_capabilities() -> bool
+{
 
   const bool check_result = Platform::check_cpu();
   IAT_CHECK(check_result);
@@ -67,13 +70,14 @@ auto test_capabilities() -> bool {
   const auto &caps = Platform::get_capabilities();
 
   volatile bool has_crc = caps.hardware_crc32;
-  (void)has_crc;
+  (void) has_crc;
 
   return true;
 }
 
 #if IA_ARCH_X64
-auto test_cpuid() -> bool {
+auto test_cpuid() -> bool
+{
   i32 regs[4] = {0};
 
   Platform::cpuid(0, 0, regs);
@@ -91,12 +95,11 @@ auto test_cpuid() -> bool {
   const String vendor_str(vendor);
   IAT_CHECK(!vendor_str.empty());
 
-  bool is_known =
-      (vendor_str == "GenuineIntel" || vendor_str == "AuthenticAMD" ||
-       vendor_str == "KVMKVMKVM" || vendor_str == "Microsoft Hv" ||
-       vendor_str == "VBoxVBoxVBox");
+  bool is_known = (vendor_str == "GenuineIntel" || vendor_str == "AuthenticAMD" || vendor_str == "KVMKVMKVM" ||
+                   vendor_str == "Microsoft Hv" || vendor_str == "VBoxVBoxVBox");
 
-  if (!is_known) {
+  if (!is_known)
+  {
 
     std::cout << "      [Info] Unknown CPU Vendor: " << vendor_str << "\n";
   }

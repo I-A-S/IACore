@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, CLI)
 
-auto test_basic_traversal() -> bool {
+auto test_basic_traversal() -> bool
+{
   const Vec<String> args = {"ignored", "one", "two", "three"};
   CLIParser parser(args);
 
@@ -41,7 +42,8 @@ auto test_basic_traversal() -> bool {
   return true;
 }
 
-auto test_peek() -> bool {
+auto test_peek() -> bool
+{
   const Vec<String> args = {"ignored", "peek_val", "next_val"};
   CLIParser parser(args);
 
@@ -58,7 +60,8 @@ auto test_peek() -> bool {
   return true;
 }
 
-auto test_consume() -> bool {
+auto test_consume() -> bool
+{
   const Vec<String> args = {"ignored", "-v", "--output", "file.txt"};
   CLIParser parser(args);
 
@@ -79,7 +82,8 @@ auto test_consume() -> bool {
   return true;
 }
 
-auto test_empty() -> bool {
+auto test_empty() -> bool
+{
   const Vec<String> args = {};
   CLIParser parser(args);
 

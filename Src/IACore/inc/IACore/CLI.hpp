@@ -17,47 +17,54 @@
 
 #include <IACore/PCH.hpp>
 
-namespace IACore {
-class CLIParser {
-  /*
-   * PLEASE READ
-   *
-   * CLIParser is still very much in it's baby stages.
-   * Subject to heavy and frequent changes, use with
-   * caution!
-   */
+namespace IACore
+{
+  class CLIParser
+  {
+    /*
+     * PLEASE READ
+     *
+     * CLIParser is still very much in it's baby stages.
+     * Subject to heavy and frequent changes, use with
+     * caution!
+     */
 
 public:
-  CLIParser(const Span<const String> args);
-  ~CLIParser() = default;
+    CLIParser(const Span<const String> args);
+    ~CLIParser() = default;
 
 public:
-  IA_NODISCARD auto remaining() const -> bool {
-    return m_current_arg < m_arg_list.end();
-  }
-
-  IA_NODISCARD auto peek() const -> StringView {
-    if (!remaining())
-      return "";
-    return *m_current_arg;
-  }
-
-  auto next() -> StringView {
-    if (!remaining())
-      return "";
-    return *m_current_arg++;
-  }
-
-  auto consume(Ref<StringView> expected) -> bool {
-    if (peek() == expected) {
-      next();
-      return true;
+    IA_NODISCARD auto remaining() const -> bool
+    {
+      return m_current_arg < m_arg_list.end();
     }
-    return false;
-  }
+
+    IA_NODISCARD auto peek() const -> StringView
+    {
+      if (!remaining())
+        return "";
+      return *m_current_arg;
+    }
+
+    auto next() -> StringView
+    {
+      if (!remaining())
+        return "";
+      return *m_current_arg++;
+    }
+
+    auto consume(Ref<StringView> expected) -> bool
+    {
+      if (peek() == expected)
+      {
+        next();
+        return true;
+      }
+      return false;
+    }
 
 private:
-  const Span<const String> m_arg_list;
-  Mut<Span<const String>::const_iterator> m_current_arg;
-};
+    const Span<const String> m_arg_list;
+    Mut<Span<const String>::const_iterator> m_current_arg;
+  };
 } // namespace IACore

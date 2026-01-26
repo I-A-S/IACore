@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, IntVec4)
 
-auto test_constructors() -> bool {
+auto test_constructors() -> bool
+{
   IntVec4 v_broadcast(10);
   alignas(16) u32 store_buf[4];
   v_broadcast.store(store_buf);
@@ -41,7 +42,8 @@ auto test_constructors() -> bool {
   return true;
 }
 
-auto test_arithmetic() -> bool {
+auto test_arithmetic() -> bool
+{
   const IntVec4 v1(10, 20, 30, 40);
   const IntVec4 v2(1, 2, 3, 4);
 
@@ -64,9 +66,10 @@ auto test_arithmetic() -> bool {
   return true;
 }
 
-auto test_bitwise() -> bool {
+auto test_bitwise() -> bool
+{
   const IntVec4 v_all_ones(0xFFFFFFFF);
-  const IntVec4 v_zero((u32)0);
+  const IntVec4 v_zero((u32) 0);
   const IntVec4 v_pattern(0xAAAAAAAA);
 
   alignas(16) u32 res[4];
@@ -94,7 +97,8 @@ auto test_bitwise() -> bool {
   return true;
 }
 
-auto test_saturation() -> bool {
+auto test_saturation() -> bool
+{
   const u32 max = 0xFFFFFFFF;
   const IntVec4 v_high(max - 10);
   const IntVec4 v_add(20);
@@ -112,7 +116,8 @@ auto test_saturation() -> bool {
   return true;
 }
 
-auto test_advanced_ops() -> bool {
+auto test_advanced_ops() -> bool
+{
   const IntVec4 v(0, 50, 100, 150);
   alignas(16) u32 res[4];
 

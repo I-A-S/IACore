@@ -15,4 +15,6 @@
 
 #include <IACore/SIMD.hpp>
 
-namespace IACore {} // namespace IACore
+namespace IACore
+{
+} // namespace IACore

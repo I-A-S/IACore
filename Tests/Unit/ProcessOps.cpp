@@ -19,24 +19,24 @@
 using namespace IACore;
 
 #if IA_PLATFORM_WINDOWS
-#define CMD_ECHO_EXE "cmd.exe"
-#define CMD_ARG_PREFIX "/c echo"
-#define NULL_DEVICE "NUL"
+#  define CMD_ECHO_EXE "cmd.exe"
+#  define CMD_ARG_PREFIX "/c echo"
+#  define NULL_DEVICE "NUL"
 #else
-#define CMD_ECHO_EXE "/bin/echo"
-#define CMD_ARG_PREFIX ""
-#define NULL_DEVICE "/dev/null"
+#  define CMD_ECHO_EXE "/bin/echo"
+#  define CMD_ARG_PREFIX ""
+#  define NULL_DEVICE "/dev/null"
 #endif
 
 IAT_BEGIN_BLOCK(Core, ProcessOps)
 
-auto test_basic_run() -> bool {
+auto test_basic_run() -> bool
+{
 
   String captured;
 
-  const auto result =
-      ProcessOps::spawn_process_sync(CMD_ECHO_EXE, CMD_ARG_PREFIX " HelloIA",
-                                     [&](StringView line) { captured = line; });
+  const auto result = ProcessOps::spawn_process_sync(CMD_ECHO_EXE, CMD_ARG_PREFIX " HelloIA",
+                                                     [&](StringView line) { captured = line; });
 
   IAT_CHECK(result.has_value());
   IAT_CHECK_EQ(*result, 0);
@@ -46,18 +46,18 @@ auto test_basic_run() -> bool {
   return true;
 }
 
-auto test_arguments() -> bool {
+auto test_arguments() -> bool
+{
   Vec<String> lines;
 
   String args = String(CMD_ARG_PREFIX) + " one two";
-  if (!args.empty() && args[0] == ' ') {
+  if (!args.empty() && args[0] == ' ')
+  {
     args.erase(0, 1);
   }
 
   const auto result =
-      ProcessOps::spawn_process_sync(CMD_ECHO_EXE, args, [&](StringView line) {
-        lines.push_back(String(line));
-      });
+      ProcessOps::spawn_process_sync(CMD_ECHO_EXE, args, [&](StringView line) { lines.push_back(String(line)); });
 
   IAT_CHECK_EQ(*result, 0);
   IAT_CHECK(lines.size() > 0);
@@ -67,7 +67,8 @@ auto test_arguments() -> bool {
   return true;
 }
 
-auto test_exit_codes() -> bool {
+auto test_exit_codes() -> bool
+{
 
   String cmd;
   String arg;
@@ -80,8 +81,7 @@ auto test_exit_codes() -> bool {
   arg = "-c \"exit 42\"";
 #endif
 
-  const auto result =
-      ProcessOps::spawn_process_sync(cmd, arg, [](StringView) {});
+  const auto result = ProcessOps::spawn_process_sync(cmd, arg, [](StringView) {});
 
   IAT_CHECK(result.has_value());
   IAT_CHECK_EQ(*result, 42);
@@ -89,10 +89,10 @@ auto test_exit_codes() -> bool {
   return true;
 }
 
-auto test_missing_exe() -> bool {
+auto test_missing_exe() -> bool
+{
 
-  const auto result =
-      ProcessOps::spawn_process_sync("sdflkjghsdflkjg", "", [](StringView) {});
+  const auto result = ProcessOps::spawn_process_sync("sdflkjghsdflkjg", "", [](StringView) {});
 
 #if IA_PLATFORM_WINDOWS
   IAT_CHECK_NOT(result.has_value());
@@ -105,11 +105,13 @@ auto test_missing_exe() -> bool {
   return true;
 }
 
-auto test_large_output() -> bool {
+auto test_large_output() -> bool
+{
 
   String massive_string;
   massive_string.reserve(5000);
-  for (i32 i = 0; i < 500; ++i) {
+  for (i32 i = 0; i < 500; ++i)
+  {
     massive_string += "1234567890";
   }
 
@@ -126,8 +128,7 @@ auto test_large_output() -> bool {
 #endif
 
   String captured;
-  const auto result = ProcessOps::spawn_process_sync(
-      cmd, arg, [&](StringView line) { captured += line; });
+  const auto result = ProcessOps::spawn_process_sync(cmd, arg, [&](StringView line) { captured += line; });
 
   IAT_CHECK(result.has_value());
   IAT_CHECK_EQ(*result, 0);
@@ -137,7 +138,8 @@ auto test_large_output() -> bool {
   return true;
 }
 
-auto test_multi_line() -> bool {
+auto test_multi_line() -> bool
+{
 
   String cmd;
   String arg;
@@ -153,16 +155,17 @@ auto test_multi_line() -> bool {
   bool found_a = false;
   bool found_b = false;
 
-  const auto res =
-      ProcessOps::spawn_process_sync(cmd, arg, [&](StringView line) {
-        line_count++;
-        if (line.find("LineA") != String::npos) {
-          found_a = true;
-        }
-        if (line.find("LineB") != String::npos) {
-          found_b = true;
-        }
-      });
+  const auto res = ProcessOps::spawn_process_sync(cmd, arg, [&](StringView line) {
+    line_count++;
+    if (line.find("LineA") != String::npos)
+    {
+      found_a = true;
+    }
+    if (line.find("LineB") != String::npos)
+    {
+      found_b = true;
+    }
+  });
   IAT_CHECK(res.has_value());
 
   IAT_CHECK(found_a);
@@ -173,10 +176,10 @@ auto test_multi_line() -> bool {
   return true;
 }
 
-auto test_complex_arguments() -> bool {
+auto test_complex_arguments() -> bool
+{
 
-  const String complex_args =
-      "-DDEFINED_MSG=\\\"Hello World\\\" -v path/to/file";
+  const String complex_args = "-DDEFINED_MSG=\\\"Hello World\\\" -v path/to/file";
 
   const String cmd = CMD_ECHO_EXE;
 
@@ -188,8 +191,7 @@ auto test_complex_arguments() -> bool {
 #endif
 
   String captured;
-  const auto result = ProcessOps::spawn_process_sync(
-      cmd, final_args, [&](StringView line) { captured += line; });
+  const auto result = ProcessOps::spawn_process_sync(cmd, final_args, [&](StringView line) { captured += line; });
 
   IAT_CHECK(result.has_value());
   IAT_CHECK_EQ(*result, 0);

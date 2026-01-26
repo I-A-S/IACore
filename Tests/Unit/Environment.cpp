@@ -23,9 +23,10 @@ static constexpr const char *TEST_VAL = "Hello World";
 
 IAT_BEGIN_BLOCK(Core, Environment)
 
-auto test_basic_cycle() -> bool {
+auto test_basic_cycle() -> bool
+{
 
-  (void)Environment::unset(TEST_KEY);
+  (void) Environment::unset(TEST_KEY);
   IAT_CHECK_NOT(Environment::exists(TEST_KEY));
 
   const auto set_res = Environment::set(TEST_KEY, TEST_VAL);
@@ -39,23 +40,25 @@ auto test_basic_cycle() -> bool {
   const String val = Environment::get(TEST_KEY);
   IAT_CHECK_EQ(val, String(TEST_VAL));
 
-  (void)Environment::unset(TEST_KEY);
+  (void) Environment::unset(TEST_KEY);
   return true;
 }
 
-auto test_overwrite() -> bool {
-  (void)Environment::set(TEST_KEY, "ValueA");
+auto test_overwrite() -> bool
+{
+  (void) Environment::set(TEST_KEY, "ValueA");
   IAT_CHECK_EQ(Environment::get(TEST_KEY), String("ValueA"));
 
-  (void)Environment::set(TEST_KEY, "ValueB");
+  (void) Environment::set(TEST_KEY, "ValueB");
   IAT_CHECK_EQ(Environment::get(TEST_KEY), String("ValueB"));
 
-  (void)Environment::unset(TEST_KEY);
+  (void) Environment::unset(TEST_KEY);
   return true;
 }
 
-auto test_unset() -> bool {
-  (void)Environment::set(TEST_KEY, "To Be Deleted");
+auto test_unset() -> bool
+{
+  (void) Environment::set(TEST_KEY, "To Be Deleted");
   IAT_CHECK(Environment::exists(TEST_KEY));
 
   const auto unset_res = Environment::unset(TEST_KEY);
@@ -69,10 +72,11 @@ auto test_unset() -> bool {
   return true;
 }
 
-auto test_defaults() -> bool {
+auto test_defaults() -> bool
+{
   const char *ghost_key = "IA_THIS_KEY_DOES_NOT_EXIST";
 
-  (void)Environment::unset(ghost_key);
+  (void) Environment::unset(ghost_key);
 
   const String empty = Environment::get(ghost_key);
   IAT_CHECK(empty.empty());
@@ -83,8 +87,9 @@ auto test_defaults() -> bool {
   return true;
 }
 
-auto test_empty_value() -> bool {
-  (void)Environment::set(TEST_KEY, "");
+auto test_empty_value() -> bool
+{
+  (void) Environment::set(TEST_KEY, "");
 
 #if IA_PLATFORM_WINDOWS
 
@@ -96,13 +101,14 @@ auto test_empty_value() -> bool {
   IAT_CHECK(opt->empty());
 #endif
 
-  (void)Environment::unset(TEST_KEY);
+  (void) Environment::unset(TEST_KEY);
   IAT_CHECK_NOT(Environment::exists(TEST_KEY));
 
   return true;
 }
 
-auto test_bad_input() -> bool {
+auto test_bad_input() -> bool
+{
 
   const auto res = Environment::set("", "Value");
   IAT_CHECK_NOT(res.has_value());

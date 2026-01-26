@@ -21,27 +21,26 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, IPC)
 
-auto test_layout_constraints() -> bool {
+auto test_layout_constraints() -> bool
+{
 
   IAT_CHECK_EQ(alignof(IpcSharedMemoryLayout), static_cast<usize>(64));
 
   IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, meta), static_cast<usize>(0));
 
-  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, moni_control),
-               static_cast<usize>(64));
+  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, moni_control), static_cast<usize>(64));
 
-  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, mino_control),
-               static_cast<usize>(192));
+  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, mino_control), static_cast<usize>(192));
 
-  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, moni_data_offset),
-               static_cast<usize>(320));
+  IAT_CHECK_EQ(offsetof(IpcSharedMemoryLayout, moni_data_offset), static_cast<usize>(320));
 
   IAT_CHECK_EQ(sizeof(IpcSharedMemoryLayout) % 64, static_cast<usize>(0));
 
   return true;
 }
 
-auto test_manual_shm_ringbuffer() -> bool {
+auto test_manual_shm_ringbuffer() -> bool
+{
   const String shm_name = "IA_TEST_IPC_LAYOUT_CHECK";
   const usize shm_size = 16 * 1024;
 
@@ -67,28 +66,20 @@ auto test_manual_shm_ringbuffer() -> bool {
   layout->mino_data_offset = header_size + half_data;
   layout->mino_data_size = half_data;
 
-  Span<u8> moni_data_span(base_ptr + layout->moni_data_offset,
-                          static_cast<usize>(layout->moni_data_size));
-  auto moni_res =
-      RingBufferView::create(&layout->moni_control, moni_data_span, true);
+  Span<u8> moni_data_span(base_ptr + layout->moni_data_offset, static_cast<usize>(layout->moni_data_size));
+  auto moni_res = RingBufferView::create(&layout->moni_control, moni_data_span, true);
   IAT_CHECK(moni_res.has_value());
   auto moni = std::move(*moni_res);
 
-  Span<u8> mino_data_span(base_ptr + layout->mino_data_offset,
-                          static_cast<usize>(layout->mino_data_size));
-  auto mino_res =
-      RingBufferView::create(&layout->mino_control, mino_data_span, true);
+  Span<u8> mino_data_span(base_ptr + layout->mino_data_offset, static_cast<usize>(layout->mino_data_size));
+  auto mino_res = RingBufferView::create(&layout->mino_control, mino_data_span, true);
   IAT_CHECK(mino_res.has_value());
   auto _ = std::move(*mino_res);
 
   String msg = "IPC_TEST_MESSAGE";
-  IAT_CHECK(
-      moni.push(100, Span<const u8>(reinterpret_cast<const u8 *>(msg.data()),
-                                    msg.size()))
-          .has_value());
+  IAT_CHECK(moni.push(100, Span<const u8>(reinterpret_cast<const u8 *>(msg.data()), msg.size())).has_value());
 
-  auto moni_reader_res =
-      RingBufferView::create(&layout->moni_control, moni_data_span, false);
+  auto moni_reader_res = RingBufferView::create(&layout->moni_control, moni_data_span, false);
   IAT_CHECK(moni_reader_res.has_value());
   auto moni_reader = std::move(*moni_reader_res);
 
@@ -99,7 +90,7 @@ auto test_manual_shm_ringbuffer() -> bool {
   IAT_CHECK(pop_res->has_value());
   IAT_CHECK_EQ(header.id, static_cast<u16>(100));
 
-  String received((char *)buffer, *pop_res.value());
+  String received((char *) buffer, *pop_res.value());
   IAT_CHECK_EQ(received, msg);
 
   FileOps::unmap_file(base_ptr);
@@ -108,13 +99,20 @@ auto test_manual_shm_ringbuffer() -> bool {
   return true;
 }
 
-class TestManager : public IpcManager {
-public:
-  void on_signal(NativeProcessID, u8) override {}
-  void on_packet(NativeProcessID, u16, Span<const u8>) override {}
+class TestManager : public IpcManager
+{
+  public:
+  void on_signal(NativeProcessID, u8) override
+  {
+  }
+
+  void on_packet(NativeProcessID, u16, Span<const u8>) override
+  {
+  }
 };
 
-auto test_manager_instantiation() -> bool {
+auto test_manager_instantiation() -> bool
+{
   TestManager mgr;
   return true;
 }

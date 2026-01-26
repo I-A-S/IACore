@@ -18,82 +18,96 @@
 #include <IACore/PCH.hpp>
 #include <cstdlib>
 
-namespace IACore {
+namespace IACore
+{
 
-class Environment {
+  class Environment
+  {
 public:
-  static auto find(Ref<String> name) -> Option<String> {
+    static auto find(Ref<String> name) -> Option<String>
+    {
 #if IA_PLATFORM_WINDOWS
-    const u32 buffer_size =
-        static_cast<u32>(GetEnvironmentVariableA(name.c_str(), nullptr, 0));
+      const u32 buffer_size = static_cast<u32>(GetEnvironmentVariableA(name.c_str(), nullptr, 0));
 
-    if (buffer_size == 0) {
-      return std::nullopt;
-    }
+      if (buffer_size == 0)
+      {
+        return std::nullopt;
+      }
 
-    Mut<String> result;
-    result.resize(buffer_size);
+      Mut<String> result;
+      result.resize(buffer_size);
 
-    const u32 actual_size = static_cast<u32>(
-        GetEnvironmentVariableA(name.c_str(), result.data(), buffer_size));
+      const u32 actual_size = static_cast<u32>(GetEnvironmentVariableA(name.c_str(), result.data(), buffer_size));
 
-    if (actual_size == 0 || actual_size > buffer_size) {
-      return std::nullopt;
-    }
+      if (actual_size == 0 || actual_size > buffer_size)
+      {
+        return std::nullopt;
+      }
 
-    result.resize(actual_size);
-    return result;
+      result.resize(actual_size);
+      return result;
 
 #else
-    const char *val = std::getenv(name.c_str());
-    if (val == nullptr) {
-      return std::nullopt;
-    }
-    return String(val);
+      const char *val = std::getenv(name.c_str());
+      if (val == nullptr)
+      {
+        return std::nullopt;
+      }
+      return String(val);
 #endif
-  }
-
-  static auto get(Ref<String> name, Ref<String> default_value = "") -> String {
-    return find(name).value_or(default_value);
-  }
-
-  static auto set(Ref<String> name, Ref<String> value) -> Result<void> {
-    if (name.empty()) {
-      return fail("Environment variable name cannot be empty");
     }
+
+    static auto get(Ref<String> name, Ref<String> default_value = "") -> String
+    {
+      return find(name).value_or(default_value);
+    }
+
+    static auto set(Ref<String> name, Ref<String> value) -> Result<void>
+    {
+      if (name.empty())
+      {
+        return fail("Environment variable name cannot be empty");
+      }
 
 #if IA_PLATFORM_WINDOWS
-    if (SetEnvironmentVariableA(name.c_str(), value.c_str()) == 0) {
-      return fail("Failed to set environment variable: {}", name);
-    }
+      if (SetEnvironmentVariableA(name.c_str(), value.c_str()) == 0)
+      {
+        return fail("Failed to set environment variable: {}", name);
+      }
 #else
-    if (setenv(name.c_str(), value.c_str(), 1) != 0) {
-      return fail("Failed to set environment variable: {}", name);
-    }
+      if (setenv(name.c_str(), value.c_str(), 1) != 0)
+      {
+        return fail("Failed to set environment variable: {}", name);
+      }
 #endif
-    return {};
-  }
-
-  static auto unset(Ref<String> name) -> Result<void> {
-    if (name.empty()) {
-      return fail("Environment variable name cannot be empty");
+      return {};
     }
+
+    static auto unset(Ref<String> name) -> Result<void>
+    {
+      if (name.empty())
+      {
+        return fail("Environment variable name cannot be empty");
+      }
 
 #if IA_PLATFORM_WINDOWS
-    if (SetEnvironmentVariableA(name.c_str(), nullptr) == 0) {
-      return fail("Failed to unset environment variable: {}", name);
-    }
+      if (SetEnvironmentVariableA(name.c_str(), nullptr) == 0)
+      {
+        return fail("Failed to unset environment variable: {}", name);
+      }
 #else
-    if (unsetenv(name.c_str()) != 0) {
-      return fail("Failed to unset environment variable: {}", name);
-    }
+      if (unsetenv(name.c_str()) != 0)
+      {
+        return fail("Failed to unset environment variable: {}", name);
+      }
 #endif
-    return {};
-  }
+      return {};
+    }
 
-  static auto exists(Ref<String> name) -> bool {
-    return find(name).has_value();
-  }
-};
+    static auto exists(Ref<String> name) -> bool
+    {
+      return find(name).has_value();
+    }
+  };
 
 } // namespace IACore

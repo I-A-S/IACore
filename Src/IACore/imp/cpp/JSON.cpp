@@ -15,4 +15,6 @@
 
 #include <IACore/JSON.hpp>
 
-namespace IACore {} // namespace IACore
+namespace IACore
+{
+} // namespace IACore

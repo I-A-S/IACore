@@ -18,6 +18,8 @@ macro(iacore_setup_project)
         add_compile_options(-Wall -Wextra -Wpedantic -Wno-language-extension-token)
     endif()
 
+    add_compile_options(-Wno-missing-field-initializers -Wno-missing-designated-field-initializers)
+
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64|x86_64|AMD64")
         set(IACORE_ARCH_X64 TRUE CACHE INTERNAL "")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")

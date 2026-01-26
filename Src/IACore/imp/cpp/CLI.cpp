@@ -15,13 +15,16 @@
 
 #include <IACore/CLI.hpp>
 
-namespace IACore {
-CLIParser::CLIParser(const Span<const String> args) : m_arg_list(args) {
-  m_current_arg = m_arg_list.begin();
+namespace IACore
+{
+  CLIParser::CLIParser(const Span<const String> args) : m_arg_list(args)
+  {
+    m_current_arg = m_arg_list.begin();
 
-  // Skip executable path
-  if (m_current_arg != m_arg_list.end()) {
-    m_current_arg++;
+    // Skip executable path
+    if (m_current_arg != m_arg_list.end())
+    {
+      m_current_arg++;
+    }
   }
-}
 } // namespace IACore

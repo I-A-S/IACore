@@ -24,7 +24,11 @@ set(TEST_SOURCES
 
 add_executable(IACore_Test_Suite ${TEST_SOURCES})
 
-target_compile_options(IACore_Test_Suite PRIVATE -fexceptions)
+if(MSVC)
+    target_compile_options(IACore_Test_Suite PRIVATE "/EHsc")
+else()
+    target_compile_options(IACore_Test_Suite PRIVATE "-fexceptions")
+endif()
 set_target_properties(IACore_Test_Suite PROPERTIES USE_EXCEPTIONS ON)
 
 target_link_libraries(IACore_Test_Suite PRIVATE IACore)

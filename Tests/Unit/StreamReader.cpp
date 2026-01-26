@@ -20,7 +20,8 @@ using namespace IACore;
 
 IAT_BEGIN_BLOCK(Core, StreamReader)
 
-auto test_read_uint8() -> bool {
+auto test_read_uint8() -> bool
+{
   u8 data[] = {0xAA, 0xBB, 0xCC};
   StreamReader reader(data);
 
@@ -36,7 +37,8 @@ auto test_read_uint8() -> bool {
   return true;
 }
 
-auto test_read_multi_byte() -> bool {
+auto test_read_multi_byte() -> bool
+{
 
   u8 data[] = {0x01, 0x02, 0x03, 0x04};
   StreamReader reader(data);
@@ -52,7 +54,8 @@ auto test_read_multi_byte() -> bool {
   return true;
 }
 
-auto test_read_float() -> bool {
+auto test_read_float() -> bool
+{
   const f32 pi = 3.14159f;
 
   u8 data[4];
@@ -67,7 +70,8 @@ auto test_read_float() -> bool {
   return true;
 }
 
-auto test_read_buffer() -> bool {
+auto test_read_buffer() -> bool
+{
   u8 src[] = {1, 2, 3, 4, 5};
   u8 dst[3] = {0};
   StreamReader reader(src);
@@ -84,7 +88,8 @@ auto test_read_buffer() -> bool {
   return true;
 }
 
-auto test_navigation() -> bool {
+auto test_navigation() -> bool
+{
   u8 data[10] = {0};
   StreamReader reader(data);
 
@@ -106,11 +111,12 @@ auto test_navigation() -> bool {
   return true;
 }
 
-auto test_boundary_checks() -> bool {
+auto test_boundary_checks() -> bool
+{
   u8 data[] = {0x00, 0x00};
   StreamReader reader(data);
 
-  (void)reader.read<u16>();
+  (void) reader.read<u16>();
   IAT_CHECK(reader.is_eof());
 
   auto val = reader.read<u8>();

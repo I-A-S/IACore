@@ -20,18 +20,24 @@
 
 using namespace IACore;
 
-struct SchedulerGuard {
-  SchedulerGuard(u8 worker_count = 2) {
+struct SchedulerGuard
+{
+  SchedulerGuard(u8 worker_count = 2)
+  {
 
-    (void)AsyncOps::initialize_scheduler(worker_count);
+    (void) AsyncOps::initialize_scheduler(worker_count);
   }
 
-  ~SchedulerGuard() { AsyncOps::terminate_scheduler(); }
+  ~SchedulerGuard()
+  {
+    AsyncOps::terminate_scheduler();
+  }
 };
 
 IAT_BEGIN_BLOCK(Core, AsyncOps)
 
-auto test_initialization() -> bool {
+auto test_initialization() -> bool
+{
 
   AsyncOps::terminate_scheduler();
 
@@ -50,14 +56,14 @@ auto test_initialization() -> bool {
   return true;
 }
 
-auto test_basic_execution() -> bool {
+auto test_basic_execution() -> bool
+{
   SchedulerGuard guard(2);
 
   AsyncOps::Schedule schedule;
   std::atomic<i32> run_count{0};
 
-  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { run_count++; }, 0,
-                          &schedule);
+  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { run_count++; }, 0, &schedule);
 
   AsyncOps::wait_for_schedule_completion(&schedule);
 
@@ -66,14 +72,16 @@ auto test_basic_execution() -> bool {
   return true;
 }
 
-auto test_concurrency() -> bool {
+auto test_concurrency() -> bool
+{
   SchedulerGuard guard(4);
 
   AsyncOps::Schedule schedule;
   std::atomic<i32> run_count{0};
   const i32 total_tasks = 100;
 
-  for (i32 i = 0; i < total_tasks; ++i) {
+  for (i32 i = 0; i < total_tasks; ++i)
+  {
     AsyncOps::schedule_task(
         [&](AsyncOps::WorkerId) {
           std::this_thread::sleep_for(std::chrono::microseconds(10));
@@ -89,17 +97,16 @@ auto test_concurrency() -> bool {
   return true;
 }
 
-auto test_priorities() -> bool {
+auto test_priorities() -> bool
+{
   SchedulerGuard guard(2);
   AsyncOps::Schedule schedule;
   std::atomic<i32> high_priority_ran{0};
   std::atomic<i32> normal_priority_ran{0};
 
-  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { high_priority_ran++; }, 0,
-                          &schedule, AsyncOps::Priority::High);
+  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { high_priority_ran++; }, 0, &schedule, AsyncOps::Priority::High);
 
-  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { normal_priority_ran++; }, 0,
-                          &schedule, AsyncOps::Priority::Normal);
+  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { normal_priority_ran++; }, 0, &schedule, AsyncOps::Priority::Normal);
 
   AsyncOps::wait_for_schedule_completion(&schedule);
 
@@ -109,14 +116,16 @@ auto test_priorities() -> bool {
   return true;
 }
 
-auto test_run_task_fire_and_forget() -> bool {
+auto test_run_task_fire_and_forget() -> bool
+{
   SchedulerGuard guard(2);
 
   std::atomic<bool> executed{false};
 
   AsyncOps::run_task([&]() { executed = true; });
 
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 100; ++i)
+  {
     if (executed.load())
       break;
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -127,7 +136,8 @@ auto test_run_task_fire_and_forget() -> bool {
   return true;
 }
 
-auto test_cancellation_safety() -> bool {
+auto test_cancellation_safety() -> bool
+{
   SchedulerGuard guard(2);
 
   AsyncOps::cancel_tasks_of_tag(999);
@@ -135,8 +145,7 @@ auto test_cancellation_safety() -> bool {
   AsyncOps::Schedule schedule;
   std::atomic<i32> counter{0};
 
-  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { counter++; }, 10,
-                          &schedule);
+  AsyncOps::schedule_task([&](AsyncOps::WorkerId) { counter++; }, 10, &schedule);
 
   AsyncOps::wait_for_schedule_completion(&schedule);
   IAT_CHECK_EQ(counter.load(), 1);

@@ -19,38 +19,47 @@
 #include <chrono>
 #include <mimalloc.h>
 
-namespace IACore {
-Mut<std::chrono::high_resolution_clock::time_point> g_start_time = {};
+namespace IACore
+{
+  Mut<std::chrono::high_resolution_clock::time_point> g_start_time = {};
 
-static Mut<std::thread::id> g_main_thread_id = {};
-static Mut<i32> g_core_init_count = 0;
+  static Mut<std::thread::id> g_main_thread_id = {};
+  static Mut<i32> g_core_init_count = 0;
 
-auto initialize() -> void {
-  g_core_init_count++;
-  if (g_core_init_count > 1) {
-    return;
+  auto initialize() -> void
+  {
+    g_core_init_count++;
+    if (g_core_init_count > 1)
+    {
+      return;
+    }
+
+    g_main_thread_id = std::this_thread::get_id();
+    g_start_time = std::chrono::high_resolution_clock::now();
+
+    Logger::initialize();
+
+    mi_option_set(mi_option_verbose, 0);
   }
 
-  g_main_thread_id = std::this_thread::get_id();
-  g_start_time = std::chrono::high_resolution_clock::now();
+  auto terminate() -> void
+  {
+    g_core_init_count--;
+    if (g_core_init_count > 0)
+    {
+      return;
+    }
 
-  Logger::initialize();
-
-  mi_option_set(mi_option_verbose, 0);
-}
-
-auto terminate() -> void {
-  g_core_init_count--;
-  if (g_core_init_count > 0) {
-    return;
+    Logger::terminate();
   }
 
-  Logger::terminate();
-}
+  auto is_initialized() -> bool
+  {
+    return g_core_init_count > 0;
+  }
 
-auto is_initialized() -> bool { return g_core_init_count > 0; }
-
-auto is_main_thread() -> bool {
-  return std::this_thread::get_id() == g_main_thread_id;
-}
+  auto is_main_thread() -> bool
+  {
+    return std::this_thread::get_id() == g_main_thread_id;
+  }
 } // namespace IACore

@@ -92,6 +92,8 @@ FetchContent_Declare(
     EXCLUDE_FROM_ALL
 )
 
+set(PUGIXML_NO_EXCEPTIONS ON)
+
 FetchContent_Declare(
   pugixml
   GIT_REPOSITORY https://github.com/zeux/pugixml.git

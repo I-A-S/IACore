@@ -57,7 +57,11 @@ endif()
 
 target_precompile_headers(IACore PUBLIC inc/IACore/PCH.hpp)
 
-set(NO_EXCEPT_FLAG "$<IF:$<CXX_COMPILER_ID:MSVC>,/EHs-c-,-fno-exceptions>")
+if(MSVC)
+    set(NO_EXCEPT_FLAG "/EHs-c-")
+else()
+    set(NO_EXCEPT_FLAG "-fno-exceptions")
+endif()
 target_compile_options(IACore PRIVATE ${NO_EXCEPT_FLAG})
 target_compile_options(IACore INTERFACE
     $<$<NOT:$<BOOL:$<TARGET_PROPERTY:USE_EXCEPTIONS>>>:${NO_EXCEPT_FLAG}>
@@ -71,6 +75,7 @@ define_property(TARGET PROPERTY USE_EXCEPTIONS
 target_compile_definitions(IACore PRIVATE 
     CPPHTTPLIB_OPENSSL_SUPPORT 
     CPPHTTPLIB_ZLIB_SUPPORT
+    _CRT_SECURE_NO_WARNINGS
     NOMINMAX
 )
 
